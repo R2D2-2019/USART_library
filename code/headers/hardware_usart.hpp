@@ -1,8 +1,8 @@
 
-#pragma once
 #include "hwlib.hpp"
 #include <queue.hpp>
-#include "uart_ports.hpp"
+#include <uart_ports.hpp>
+#pragma once
 
 namespace r2d2 {
 
@@ -11,7 +11,7 @@ namespace r2d2 {
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
         bool usart_initialized = true;
-        uart_ports usart_port;
+        uart_ports_c &usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -27,7 +27,7 @@ namespace r2d2 {
         uint8_t receive_byte();
 
     public:
-        hardware_usart_c(unsigned int baudrate, uart_ports usart_port);
+        hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port);
 
         /// @brief enables the internal USART controller
         void enable();
