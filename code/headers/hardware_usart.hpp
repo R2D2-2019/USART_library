@@ -1,8 +1,8 @@
+#pragma once
 
 #include "hwlib.hpp"
 #include <queue.hpp>
 #include <uart_ports.hpp>
-#pragma once
 
 namespace r2d2 {
 
