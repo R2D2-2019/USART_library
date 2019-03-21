@@ -8,7 +8,8 @@ int main(void) {
     WDT->WDT_MR = WDT_MR_WDDIS;
     hwlib::wait_ms(1000);
     hwlib::cout << "this works on arduino";
-    auto c = r2d2::hardware_usart_c(9600, r2d2::uart_ports::uart1);
+    r2d2::uart_ports_c port = r2d2::uart_ports_c::uart1;
+    auto c = r2d2::hardware_usart_c(9600, port);
     char cc;
     char gps_buffer[100];
     bool complete_string = false;
