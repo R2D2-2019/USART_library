@@ -11,6 +11,7 @@
 
 # add Catch
 SEARCH            += ../../../libraries/Catch2/single_include/catch2
+SEARCH				+= ../../../libraries/datastructures/code/headers
 
 # add hwlib
 HWLIB             ?= ../../../libraries/hwlib

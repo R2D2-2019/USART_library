@@ -15,7 +15,7 @@ SOURCES := $(wildcard src/*.cpp)
 HEADERS := $(wildcard headers/*.hpp)
 
 # other places to look for files for this project
-SEARCH  := ./headers ./src ../../../libraries/datastructures/code/headers/
+SEARCH  := ./headers ./src
 
 # set REATIVE to the next higher directory 
 # and defer to the Makefile.due there
