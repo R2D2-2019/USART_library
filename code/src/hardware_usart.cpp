@@ -11,7 +11,6 @@ namespace r2d2 {
         while (!transmit_ready()) {
         }
         hardware_usart->US_THR = b;
-        // hwlib::wait_ms(1);
     }
 
     uint8_t hardware_usart_c::receive_byte() {
