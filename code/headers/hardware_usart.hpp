@@ -39,13 +39,21 @@ public:
   /// an application to provide its own definition.
   void uart_putc(char c);
 
-  /// char output operator
+  /// @brief char output operator
+  /// 
+  /// Although calling send_byte should do the exact same thing.
+  /// In practice useing this fuction is more stable
+  /// Especially when the values are repeated.
   hardware_usart_c &operator<<(uint8_t byte) {
     send_byte(byte);
     return *this;
   }
 
-  /// string output operator
+  /// @brief string output operator
+  ///
+  /// used for char arrays to quickly send more than one byte
+  /// In practice useing this fuction is more stable than repeated use of send_byte() 
+  /// Especially when the values are repeated.
   hardware_usart_c &operator<<(const char *c) {
     hwlib::cout << c;
     for (const char *p = c; *p != '\0'; p++) {
@@ -54,7 +62,7 @@ public:
     return *this;
   }
 
-  /// WIP
+  // WIP? Getc works fine. 
   // char output operator
   // template<>
   //    basic_istream<char>&
