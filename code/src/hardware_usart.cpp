@@ -2,8 +2,6 @@
 #include "hardware_usart.hpp"
 
 namespace r2d2 {
-namespace r2d2
-{
 
 bool hardware_usart_c::transmit_ready() { return (hardware_usart->US_CSR & 2); }
 
