@@ -55,7 +55,6 @@ namespace r2d2 {
         /// In practice useing this fuction is more stable than repeated use of
         /// send_byte() Especially when the values are repeated.
         hardware_usart_c &operator<<(const char *c) {
-            hwlib::cout << c;
             for (const char *p = c; *p != '\0'; p++) {
                 send_byte(*p);
             }
