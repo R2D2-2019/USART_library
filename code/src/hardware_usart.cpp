@@ -2,7 +2,6 @@
 #include "hardware_usart.hpp"
 
 namespace r2d2 {
-
     bool hardware_usart_c::transmit_ready() {
         return (hardware_usart->US_CSR & 2);
     }
@@ -17,9 +16,10 @@ namespace r2d2 {
         return hardware_usart->US_RHR;
     }
 
-    hardware_usart_c::hardware_usart_c(unsigned int baudrate,
-                                       uart_ports_c &usart_port)
-        : baudrate(baudrate), usart_port(usart_port) {
+    hardware_usart_c::hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port):
+        baudrate(baudrate),
+        usart_port(usart_port)
+    {
         if (usart_port == uart_ports_c::uart1) {
 
             hardware_usart = USART0;
@@ -68,6 +68,18 @@ namespace r2d2 {
         hardware_usart->US_IDR = 0xFFFFFFFF;
 
         enable();
+    }
+
+    hardware_usart_c& hardware_usart_c::operator<<(uint8_t byte) {
+        send_byte(byte);
+        return *this;
+    }
+
+    hardware_usart_c& hardware_usart_c::operator<<(const char *c) {
+        for (const char *p = c; *p != '\0'; p++) {
+            send_byte(*p);
+        }
+        return *this;
     }
 
     void hardware_usart_c::enable() {

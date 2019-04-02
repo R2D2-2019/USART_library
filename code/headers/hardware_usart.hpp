@@ -44,22 +44,14 @@ namespace r2d2 {
         /// Although calling send_byte should do the exact same thing.
         /// In practice useing this fuction is more stable
         /// Especially when the values are repeated.
-        hardware_usart_c &operator<<(uint8_t byte) {
-            send_byte(byte);
-            return *this;
-        }
+        hardware_usart_c &operator<<(uint8_t byte);
 
         /// @brief string output operator
         ///
         /// used for char arrays to quickly send more than one byte
         /// In practice useing this fuction is more stable than repeated use of
         /// send_byte() Especially when the values are repeated.
-        hardware_usart_c &operator<<(const char *c) {
-            for (const char *p = c; *p != '\0'; p++) {
-                send_byte(*p);
-            }
-            return *this;
-        }
+        hardware_usart_c &operator<<(const char *c);
 
         /// @brief enables the internal USART controller
         void enable();
