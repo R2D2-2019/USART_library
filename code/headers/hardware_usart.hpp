@@ -29,6 +29,30 @@ namespace r2d2 {
     public:
         hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port);
 
+        /// console character output function
+        ///
+        /// This is the function used for console (ostream) output.
+        /// The embedded targets provide an implementation that writes
+        /// to the serial port.
+        ///
+        /// This definition is weak, which allows
+        /// an application to provide its own definition.
+        void uart_putc(char c);
+
+        /// @brief char output operator
+        ///
+        /// Although calling send_byte should do the exact same thing.
+        /// In practice useing this fuction is more stable
+        /// Especially when the values are repeated.
+        hardware_usart_c &operator<<(uint8_t byte);
+
+        /// @brief string output operator
+        ///
+        /// used for char arrays to quickly send more than one byte
+        /// In practice useing this fuction is more stable than repeated use of
+        /// send_byte() Especially when the values are repeated.
+        hardware_usart_c &operator<<(const char *c);
+
         /// @brief enables the internal USART controller
         void enable();
 
@@ -59,11 +83,5 @@ namespace r2d2 {
         /// @brief returns available data in buffer
         /// @return amount of uint8_t's in buffer
         unsigned int available();
-
-
-
-
     };
-
-
-};
+}; // namespace r2d2
