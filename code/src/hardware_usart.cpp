@@ -2,15 +2,14 @@
 #include "hardware_usart.hpp"
 
 namespace r2d2 {
-
     bool hardware_usart_c::transmit_ready() {
         return (hardware_usart->US_CSR & 2);
     }
 
     void hardware_usart_c::send_byte(const uint8_t &b) {
         while (!transmit_ready()) {
-            hardware_usart->US_THR = b;
         }
+        hardware_usart->US_THR = b;
     }
 
     uint8_t hardware_usart_c::receive_byte() {
@@ -51,15 +50,12 @@ namespace r2d2 {
 
             PMC->PMC_PCER0 = (0x01 << ID_USART3);
         } else if (usart_port == uart_ports_c::uart0) {
-            // NO! its probably not a good idea to use this, it is already in use by the
-            // hwlib::cout stuff
-           // hardware_usart = UART;
-            //PIOA->PIO_PDR   = PIO_PA8;
-	        //PIOA->PIO_ABSR &= ~PIO_PA8;
-	        //PIOA->PIO_PDR   = PIO_PA9;
-	        //PIOA->PIO_ABSR &= ~PIO_PA9;
+            // NO! its probably not a good idea to use this, it is already in
+            // use by the hwlib::cout stuff hardware_usart = UART; PIOA->PIO_PDR
+            // = PIO_PA8; PIOA->PIO_ABSR &= ~PIO_PA8; PIOA->PIO_PDR   = PIO_PA9;
+            // PIOA->PIO_ABSR &= ~PIO_PA9;
 
-            //PMC->PMC_PCER0 = ( 0x01 << ID_UART );*/
+            // PMC->PMC_PCER0 = ( 0x01 << ID_UART );*/
             usart_initialized = false;
         }
 
@@ -67,13 +63,23 @@ namespace r2d2 {
 
         hardware_usart->US_BRGR = (5241600u / baudrate);
 
-        hardware_usart->US_MR = UART_MR_PAR_NO | UART_MR_CHMODE_NORMAL |
-                                US_MR_CHRL_8_BIT;
+        hardware_usart->US_MR =
+            UART_MR_PAR_NO | UART_MR_CHMODE_NORMAL | US_MR_CHRL_8_BIT;
         hardware_usart->US_IDR = 0xFFFFFFFF;
 
         enable();
+    }
 
+    hardware_usart_c& hardware_usart_c::operator<<(uint8_t byte) {
+        send_byte(byte);
+        return *this;
+    }
 
+    hardware_usart_c& hardware_usart_c::operator<<(const char *c) {
+        for (const char *p = c; *p != '\0'; p++) {
+            send_byte(*p);
+        }
+        return *this;
     }
 
     void hardware_usart_c::enable() {
@@ -83,8 +89,9 @@ namespace r2d2 {
     }
 
     void hardware_usart_c::disable() {
-        if (hardware_usart){
-            hardware_usart->US_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
+        if (hardware_usart) {
+            hardware_usart->US_CR =
+                UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
         }
     }
 
@@ -98,7 +105,7 @@ namespace r2d2 {
     }
 
     uint8_t hardware_usart_c::receive() {
-        if (!input_buffer.size()){
+        if (!input_buffer.size()) {
             return 0;
         }
 
@@ -106,7 +113,6 @@ namespace r2d2 {
     }
 
     bool hardware_usart_c::char_available() {
-
         return (available() > 0);
     }
 
@@ -118,13 +124,10 @@ namespace r2d2 {
     }
 
     unsigned int hardware_usart_c::available() {
-        if((hardware_usart->US_CSR & 1) !=0) {
+        if ((hardware_usart->US_CSR & 1) != 0) {
             input_buffer.push(receive_byte());
         }
 
         return input_buffer.size();
     }
-
-
-
-};
+}; // namespace r2d2
