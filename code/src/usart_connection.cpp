@@ -1,4 +1,4 @@
-#include "../headers/usart_connection.hpp"
+#include <usart_connection.hpp>
 
 namespace r2d2 {
     usart_connection_c &usart_connection_c::operator<<(uint8_t byte) {

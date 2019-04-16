@@ -44,34 +44,34 @@ namespace r2d2 {
         hardware_usart_c &operator<<(const char *c) ;
 
         /// @brief enables the internal USART controller
-        void enable();
+        void enable() override;
 
         /// @brief disables the internal USART controller
-        void disable();
+        void disable() override;
 
         /// @brief send single byte
         /// @param c: byte to send
         /// @return true if byte send, false if not send
-        bool send(const uint8_t c);
+        bool send(const uint8_t c) override;
 
         /// @brief sends a char via usart
         /// @param c: char to send
-        void putc(char c);
+        void putc(char c) override;
 
         /// @brief recieve byte bia usart
         /// @return received byte
-        uint8_t receive();
+        uint8_t receive() override;
 
         /// @brief check if char is available
         /// @return true if char is available false if not
-        bool char_available();
+        bool char_available() override;
 
         /// @brief receive char via usart
         /// @return char received
-        char getc();
+        char getc() override;
 
         /// @brief returns available data in buffer
         /// @return amount of uint8_t's in buffer
-        unsigned int available();
+        unsigned int available() override;
     };
 }; // namespace r2d2
