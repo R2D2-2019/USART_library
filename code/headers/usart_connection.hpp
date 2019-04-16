@@ -11,10 +11,6 @@ namespace r2d2 {
     class usart_connection_c {
     public:
 
-        /// @brief write character
-        /// @param c character to send
-        virtual void uart_putc(char c) = 0;
-
         /// @brief operator << writes byte to usart
         /// @param byte byte to send
         usart_connection_c &operator<<(uint8_t byte);

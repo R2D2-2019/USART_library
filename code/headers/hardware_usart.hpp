@@ -7,12 +7,12 @@
 
 namespace r2d2 {
 
-    class hardware_usart_c : public usart_connection_c {
+    class hardware_usart_c : public usart_connection_c{
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
         bool usart_initialized = true;
-        uart_ports_c &usart_port;
+        uart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -29,17 +29,6 @@ namespace r2d2 {
 
     public:
         hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port) ;
-
-        /// console character output function
-        ///
-        /// This is the function used for console (ostream) output.
-        /// The embedded targets provide an implementation that writes
-        /// to the serial port.
-        ///
-        /// This definition is weak, which allows
-        /// an application to provide its own definition.
-        void uart_putc(char c) override;
-
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.
@@ -55,34 +44,34 @@ namespace r2d2 {
         hardware_usart_c &operator<<(const char *c) ;
 
         /// @brief enables the internal USART controller
-        void enable() override;
+        void enable();
 
         /// @brief disables the internal USART controller
-        void disable() override;
+        void disable();
 
         /// @brief send single byte
         /// @param c: byte to send
         /// @return true if byte send, false if not send
-        bool send(const uint8_t c) override;
+        bool send(const uint8_t c);
 
         /// @brief sends a char via usart
         /// @param c: char to send
-        void putc(char c) override;
+        void putc(char c);
 
         /// @brief recieve byte bia usart
         /// @return received byte
-        uint8_t receive() override;
+        uint8_t receive();
 
         /// @brief check if char is available
         /// @return true if char is available false if not
-        bool char_available() override;
+        bool char_available();
 
         /// @brief receive char via usart
         /// @return char received
-        char getc() override;
+        char getc();
 
         /// @brief returns available data in buffer
         /// @return amount of uint8_t's in buffer
-        unsigned int available() override;
+        unsigned int available();
     };
 }; // namespace r2d2
