@@ -2,7 +2,7 @@
 
 namespace r2d2 {
 
-    test_usart_c::test_usart_c(unsigned int baudrate, usart_ports_c controller):
+    test_usart_c::test_usart_c(unsigned int baudrate, uart_ports_c usart_port):
         baudrate(baudrate),
         controller(controller)
     {}

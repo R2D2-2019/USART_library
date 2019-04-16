@@ -28,7 +28,7 @@ namespace r2d2 {
         uint8_t receive_byte();
 
     public:
-        hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port) ;
+        hardware_usart_c(unsigned int baudrate, uart_ports_c usart_port) ;
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.

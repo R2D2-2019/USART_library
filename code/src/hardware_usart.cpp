@@ -17,7 +17,7 @@ namespace r2d2 {
         return hardware_usart->US_RHR;
     }
 
-    hardware_usart_c::hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port) :
+    hardware_usart_c::hardware_usart_c(unsigned int baudrate, uart_ports_c usart_port) :
         baudrate(baudrate),
         usart_port(usart_port)
     {
