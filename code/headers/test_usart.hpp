@@ -8,7 +8,7 @@ namespace r2d2 {
 
     class test_usart_c : public usart_connection_c {
     private:
-        unsigned int boudrate;
+        unsigned int baudrate;
         uart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
