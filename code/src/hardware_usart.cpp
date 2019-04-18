@@ -1,7 +1,8 @@
-
-#include "hardware_usart.hpp"
-
+#include <hardware_usart.hpp>
+#include <uart_ports.hpp>
 namespace r2d2 {
+
+
     bool hardware_usart_c::transmit_ready() {
         return (hardware_usart->US_CSR & 2);
     }
@@ -16,7 +17,7 @@ namespace r2d2 {
         return hardware_usart->US_RHR;
     }
 
-    hardware_usart_c::hardware_usart_c(unsigned int baudrate, uart_ports_c &usart_port):
+    hardware_usart_c::hardware_usart_c(unsigned int baudrate, uart_ports_c usart_port) :
         baudrate(baudrate),
         usart_port(usart_port)
     {
@@ -50,6 +51,7 @@ namespace r2d2 {
 
             PMC->PMC_PCER0 = (0x01 << ID_USART3);
         } else if (usart_port == uart_ports_c::uart0) {
+
             // NO! its probably not a good idea to use this, it is already in
             // use by the hwlib::cout stuff hardware_usart = UART; PIOA->PIO_PDR
             // = PIO_PA8; PIOA->PIO_ABSR &= ~PIO_PA8; PIOA->PIO_PDR   = PIO_PA9;
