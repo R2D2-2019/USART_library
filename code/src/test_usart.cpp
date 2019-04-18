@@ -4,7 +4,7 @@ namespace r2d2 {
 
     test_usart_c::test_usart_c(unsigned int baudrate, uart_ports_c usart_port):
         baudrate(baudrate),
-        controller(controller)
+        usart_port(usart_port)
     {}
 
     void test_usart_c::enable(){
@@ -16,6 +16,7 @@ namespace r2d2 {
     }
 
     bool test_usart_c::send(const uint8_t c) {
+        return true;
         //Not needed in test implementation
     }
 
