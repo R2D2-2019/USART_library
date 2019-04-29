@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hwlib.hpp>
+#include <stdint.h>
 #include <queue.hpp>
 #include <uart_ports.hpp>
 #include <usart_connection.hpp>
@@ -73,5 +74,6 @@ namespace r2d2 {
         /// @brief returns available data in buffer
         /// @return amount of uint8_t's in buffer
         unsigned int available() override;
+
     };
 }; // namespace r2d2

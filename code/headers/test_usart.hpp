@@ -2,7 +2,8 @@
 #include <usart_connection.hpp>
 #include <uart_ports.hpp>
 #include <queue.hpp>
-#include <hwlib.hpp>
+#include <vector>
+#include <string>
 
 namespace r2d2 {
 
@@ -10,12 +11,12 @@ namespace r2d2 {
     private:
         unsigned int baudrate;
         uart_ports_c usart_port;
-        queue_c<uint8_t, 250> input_buffer;
+        queue_c<uint8_t, 250> receive_buffer;
 
 
     public:
 
-        test_usart_c(unsigned int baudrate, uart_ports_c usart_port);
+        test_usart_c();
 
         /// @brief does not actualy disable anything
         void enable() override;
@@ -46,6 +47,18 @@ namespace r2d2 {
         ///@brief returns 1
         ///@return unsigned int always 1
         unsigned int available() override;
+
+
+        /// @brief sets a string the test usart will return
+        void set_receive_string(const std::string &str);
+
+        /// @brief sets bytes the test usart will return
+        /// @param bytes vector of bytes
+        void set_receive_bytes(const std::vector<uint8_t> &bytes);
+
+        /// @brief sets one byte the test usart will return
+        /// @param byte to be returned in receive
+        void set_receive_byte(const uint8_t byte);
 
     };
 };
