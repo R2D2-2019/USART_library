@@ -87,16 +87,12 @@ namespace r2d2 {
     }
 
     void hardware_usart_c::enable() {
-        if (hardware_usart) {
-            hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
-        }
+        hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
     }
 
     void hardware_usart_c::disable() {
-        if (hardware_usart) {
-            hardware_usart->US_CR =
+        hardware_usart->US_CR =
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
-        }
     }
 
     bool hardware_usart_c::send(const uint8_t c) {
