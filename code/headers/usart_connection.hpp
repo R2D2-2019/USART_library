@@ -1,16 +1,15 @@
 /// @file
-/// @brief      base class for a usart implementation hardware, software and mock
+/// @brief      base class for a usart implementation hardware, software and
+/// mock
 /// @author     Patrick Dekker
-
 #pragma once
+
 #include <hwlib.hpp>
 
-namespace r2d2 {
-
+namespace r2d2::usart {
     /// @brief  base class for usart implementation
     class usart_connection_c {
     public:
-
         /// @brief operator << writes byte to usart
         /// @param byte byte to send
         usart_connection_c &operator<<(uint8_t byte);
@@ -35,7 +34,7 @@ namespace r2d2 {
 
         /// @brief receive byte from USART
         /// @return uint8_t byte received from USART
-        virtual uint8_t receive() =0;
+        virtual uint8_t receive() = 0;
 
         /// @brief check if char is available
         /// @return true if byte is available false if not
@@ -43,11 +42,11 @@ namespace r2d2 {
 
         /// @brief receive char if available
         /// @return char received
-        virtual char getc() =0;
+        virtual char getc() = 0;
 
         /// @brief returns available data
         /// @return amount of bytes
-        virtual unsigned int available() =0;
+        virtual unsigned int available() = 0;
     };
 
-};
+} // namespace r2d2::usart

@@ -1,10 +1,11 @@
 #pragma once
-#include <usart_connection.hpp>
-#include <uart_ports.hpp>
-#include <queue.hpp>
-#include <hwlib.hpp>
 
-namespace r2d2 {
+#include <hwlib.hpp>
+#include <queue.hpp>
+#include <uart_ports.hpp>
+#include <usart_connection.hpp>
+
+namespace r2d2::usart {
 
     class test_usart_c : public usart_connection_c {
     private:
@@ -12,9 +13,7 @@ namespace r2d2 {
         uart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
-
     public:
-
         test_usart_c(unsigned int baudrate, uart_ports_c usart_port);
 
         /// @brief does not actualy disable anything
@@ -46,6 +45,5 @@ namespace r2d2 {
         ///@brief returns 1
         ///@return unsigned int always 1
         unsigned int available() override;
-
     };
-};
+}; // namespace r2d2::usart
