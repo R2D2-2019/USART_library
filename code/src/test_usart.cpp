@@ -1,22 +1,21 @@
 #include <test_usart.hpp>
 
-namespace r2d2 {
-
-    test_usart_c::test_usart_c(unsigned int baudrate, uart_ports_c usart_port):
-        baudrate(baudrate),
-        controller(controller)
-    {}
-
-    void test_usart_c::enable(){
-        //Not needed in test implementation
+namespace r2d2::usart {
+    test_usart_c::test_usart_c(unsigned int baudrate, uart_ports_c usart_port)
+        : baudrate(baudrate) {
     }
 
-    void test_usart_c::disable(){
-        //Not needed in test implementation
+    void test_usart_c::enable() {
+        // Not needed in test implementation
+    }
+
+    void test_usart_c::disable() {
+        // Not needed in test implementation
     }
 
     bool test_usart_c::send(const uint8_t c) {
-        //Not needed in test implementation
+        // Not needed in test implementation
+        return false;
     }
 
     void test_usart_c::putc(char c) {
@@ -38,4 +37,4 @@ namespace r2d2 {
     unsigned int test_usart_c::available() {
         return 1;
     }
-};
+}; // namespace r2d2::usart
