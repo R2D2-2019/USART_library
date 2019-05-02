@@ -15,7 +15,7 @@ namespace r2d2 {
         uint16_t id;
     };
 
-    hw_usart_s usart[uint8_t(uart_ports_c::UART_SIZE)] = {
+    const static hw_usart_s usart[uint8_t(uart_ports_c::UART_SIZE)] = {
         {USART0, PIO_PA10A_RXD0, PIO_PA11A_TXD0, PIOA, peripheral::peripheral_a, ID_USART0},
         {USART1, PIO_PA12A_RXD1, PIO_PA13A_TXD1, PIOA, peripheral::peripheral_a, ID_USART1},
         {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
