@@ -21,6 +21,19 @@ namespace r2d2 {
         {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
     };
 
+    void set_peripheral(Pio * pio, uint32_t mask, peripheral p) {
+        uint32_t t = pio->PIO_ABSR;
+
+        if (p == peripheral::peripheral_a) {
+            pio->PIO_ABSR &= (~mask & t);
+        } else {
+            pio->PIO_ABSR = (mask | t);
+        }
+
+        // remove pin from pio controller
+        pio->PIO_PDR = mask;
+    };
+
     hardware_usart_c::hardware_usart_c(unsigned int baudrate,
                                        uart_ports_c usart_port)
         : baudrate(baudrate) {
@@ -28,19 +41,6 @@ namespace r2d2 {
         if (usart_port == uart_ports_c::UART_SIZE){
             HWLIB_PANIC_WITH_LOCATION;
         }
-
-        auto set_peripheral = [](Pio * pio, uint32_t mask, peripheral p) {
-            uint32_t t = pio->PIO_ABSR;
-
-            if (p == peripheral::peripheral_a) {
-                pio->PIO_ABSR &= (~mask & t);
-            } else {
-                pio->PIO_ABSR = (mask | t);
-            }
-
-            // remove pin from pio controller
-            pio->PIO_PDR = mask;
-        };
 
         const auto &curr = usart[uint8_t(usart_port)];
 
