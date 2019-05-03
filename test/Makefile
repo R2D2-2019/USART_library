@@ -12,7 +12,7 @@
 SOURCES := ../code/src/test_usart.cpp
 
 # header files in this project
-HEADERS := ../code/headers/test_usart.hpp ../code/headers/uart_ports.hpp
+HEADERS := ../code/headers/test_usart.hpp
 
 # other places to look for files for this project
 SEARCH  := ../code/headers ../code/src
