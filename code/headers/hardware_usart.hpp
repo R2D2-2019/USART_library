@@ -12,8 +12,6 @@ namespace r2d2 {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        bool usart_initialized = true;
-        uart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
         /// @brief check if the transmitter is ready to send
