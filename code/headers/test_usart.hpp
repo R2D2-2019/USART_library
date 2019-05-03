@@ -2,22 +2,21 @@
 #include <usart_connection.hpp>
 #include <uart_ports.hpp>
 #include <queue.hpp>
-#include <hwlib.hpp>
+#include <vector>
+#include <string>
 
 namespace r2d2 {
 
     class test_usart_c : public usart_connection_c {
     private:
-        unsigned int boudrate;
-        uart_ports_c usart_port;
-        queue_c<uint8_t, 250> input_buffer;
+        queue_c<uint8_t, 250> receive_buffer;
 
 
     public:
 
-        test_usart_c(unsigned int baudrate, uart_ports_c usart_port);
+        test_usart_c();
 
-        /// @brief does not actualy disable anything
+        /// @brief does not actualy enable anything
         void enable() override;
 
         /// @brief does not actualy disable anyting
@@ -36,7 +35,7 @@ namespace r2d2 {
         uint8_t receive() override;
 
         ///@brief returns true if char is available
-        ///@return bool always true
+        ///@return bool false if queue is empty, true if not
         bool char_available() override;
 
         ///@brief returns receive()
@@ -44,8 +43,20 @@ namespace r2d2 {
         char getc() override;
 
         ///@brief returns 1
-        ///@return unsigned int always 1
+        ///@return unsigned int the amount of bytes in queue
         unsigned int available() override;
+
+
+        /// @brief sets a string the test usart will return
+        void set_receive_string(const std::string &str);
+
+        /// @brief sets bytes the test usart will return
+        /// @param bytes vector of bytes
+        void set_receive_bytes(const std::vector<uint8_t> &bytes);
+
+        /// @brief sets one byte the test usart will return
+        /// @param byte to be returned in receive
+        void add_receive_byte(const uint8_t byte);
 
     };
 };

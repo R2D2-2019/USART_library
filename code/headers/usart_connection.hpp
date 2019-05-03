@@ -3,7 +3,8 @@
 /// @author     Patrick Dekker
 
 #pragma once
-#include <hwlib.hpp>
+
+#include <stdint.h>
 
 namespace r2d2 {
 
