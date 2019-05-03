@@ -2,7 +2,6 @@
 
 #include <hwlib.hpp>
 #include <queue.hpp>
-#include <uart_ports.hpp>
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {

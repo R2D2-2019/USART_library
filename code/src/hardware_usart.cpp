@@ -1,5 +1,4 @@
 #include <hardware_usart.hpp>
-#include <uart_ports.hpp>
 
 namespace r2d2::usart {
     bool hardware_usart_c::transmit_ready() {

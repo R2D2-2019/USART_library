@@ -20,7 +20,7 @@ Then you'll be able to include the library like so in your project files:
 ## Using this library
 When using this library it is first required you create an uartport like so
 ```c++
-r2d2::uart_ports_c uart_port_one = r2d2::uart_ports_c::uart1;
+r2d2::usart_ports_c uart_port_one = r2d2::usart_ports_c::uart1;
 ```
 uart1 corresponds to tx1 and rx1, uart2 to rx2 and tx2 etc.
 uart0 is also used for programming and communicating with the PC. It is reccomended you DO NOT use it. 
