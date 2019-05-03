@@ -6,12 +6,21 @@
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {
+    enum class usart_ports_c {
+        uart0,
+        uart1,
+        uart2,
+        uart3,
+        // only for determining how many uart ports there are
+        UART_SIZE
+    };
+
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
         bool usart_initialized = true;
-        uart_ports_c usart_port;
+        usart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -27,7 +36,7 @@ namespace r2d2::usart {
         uint8_t receive_byte();
 
     public:
-        hardware_usart_c(unsigned int baudrate, uart_ports_c usart_port);
+        hardware_usart_c(unsigned int baudrate, usart_ports_c usart_port);
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.

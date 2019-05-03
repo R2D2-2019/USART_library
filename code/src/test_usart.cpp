@@ -1,7 +1,7 @@
 #include <test_usart.hpp>
 
 namespace r2d2::usart {
-    test_usart_c::test_usart_c(unsigned int baudrate, uart_ports_c usart_port)
+    test_usart_c::test_usart_c(unsigned int baudrate)
         : baudrate(baudrate) {
     }
 

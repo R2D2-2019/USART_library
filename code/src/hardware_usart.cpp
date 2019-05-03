@@ -17,9 +17,9 @@ namespace r2d2::usart {
     }
 
     hardware_usart_c::hardware_usart_c(unsigned int baudrate,
-                                       uart_ports_c usart_port)
+                                       usart_ports_c usart_port)
         : baudrate(baudrate), usart_port(usart_port) {
-        if (usart_port == uart_ports_c::uart1) {
+        if (usart_port == usart_ports_c::uart1) {
 
             hardware_usart = USART0;
 
@@ -29,7 +29,7 @@ namespace r2d2::usart {
             PIOA->PIO_ABSR &= ~PIO_PA11;
 
             PMC->PMC_PCER0 = (0x01 << ID_USART0);
-        } else if (usart_port == uart_ports_c::uart2) {
+        } else if (usart_port == usart_ports_c::uart2) {
             hardware_usart = USART1;
 
             PIOA->PIO_PDR = PIO_PA12;
@@ -38,7 +38,7 @@ namespace r2d2::usart {
             PIOA->PIO_ABSR &= ~PIO_PA13;
 
             PMC->PMC_PCER0 = (0x01 << ID_USART1);
-        } else if (usart_port == uart_ports_c::uart3) {
+        } else if (usart_port == usart_ports_c::uart3) {
 
             hardware_usart = USART3;
 
@@ -48,7 +48,7 @@ namespace r2d2::usart {
             PIOD->PIO_ABSR |= PIO_PD5;
 
             PMC->PMC_PCER0 = (0x01 << ID_USART3);
-        } else if (usart_port == uart_ports_c::uart0) {
+        } else if (usart_port == usart_ports_c::uart0) {
 
             // NO! its probably not a good idea to use this, it is already in
             // use by the hwlib::cout stuff hardware_usart = UART; PIOA->PIO_PDR

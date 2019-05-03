@@ -10,11 +10,10 @@ namespace r2d2::usart {
     class test_usart_c : public usart_connection_c {
     private:
         unsigned int baudrate;
-        uart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
     public:
-        test_usart_c(unsigned int baudrate, uart_ports_c usart_port);
+        test_usart_c(unsigned int baudrate);
 
         /// @brief does not actualy disable anything
         void enable() override;
