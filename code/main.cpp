@@ -7,12 +7,10 @@ int main(void) {
     WDT->WDT_MR = WDT_MR_WDDIS;
     hwlib::wait_ms(1000);
     hwlib::cout << "this works on arduino";
-    auto hwusart = r2d2::hardware_usart_c(9600, r2d2::uart_ports_c::uart1);
-    // nothing of use here
 
-    r2d2::hardware_usart_c usart(115200, r2d2::uart_ports_c::uart1);
+    auto usart = r2d2::usart::hardware_usart_c(9600, r2d2::usart::usart_ports_c::uart1);
 
-    uint16_t count = 0;
+    uint8_t count = 0;
 
     for(;;){
         usart << "Test: " << count++ << '\n';

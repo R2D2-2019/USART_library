@@ -1,16 +1,15 @@
 #pragma once
-#include <usart_connection.hpp>
-#include <uart_ports.hpp>
-#include <queue.hpp>
+
 #include <vector>
 #include <string>
+#include <queue.hpp>
+#include <usart_connection.hpp>
 
-namespace r2d2 {
+namespace r2d2::usart {
 
     class test_usart_c : public usart_connection_c {
     private:
         queue_c<uint8_t, 250> receive_buffer;
-
 
     public:
 
@@ -45,7 +44,6 @@ namespace r2d2 {
         ///@brief returns 1
         ///@return unsigned int the amount of bytes in queue
         unsigned int available() override;
-
 
         /// @brief sets a string the test usart will return
         void set_receive_string(const std::string &str);

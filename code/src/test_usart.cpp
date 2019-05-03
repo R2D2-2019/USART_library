@@ -1,6 +1,6 @@
 #include <test_usart.hpp>
 
-namespace r2d2 {
+namespace r2d2::usart {
 
     test_usart_c::test_usart_c(){}
 
@@ -53,5 +53,5 @@ namespace r2d2 {
 
     void test_usart_c::add_receive_byte(const uint8_t byte){
         receive_buffer.push(byte);
-    }
-};
+    }    
+}; // namespace r2d2::usart

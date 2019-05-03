@@ -1,14 +1,20 @@
 #pragma once
 
 #include <hwlib.hpp>
-#include <stdint.h>
 #include <queue.hpp>
-#include <uart_ports.hpp>
 #include <usart_connection.hpp>
 
-namespace r2d2 {
+namespace r2d2::usart {
+    enum class usart_ports_c {
+        uart0,
+        uart1,
+        uart2,
+        uart3,
+        // only for determining how many uart ports there are
+        UART_SIZE
+    };
 
-    class hardware_usart_c : public usart_connection_c{
+    class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
@@ -27,7 +33,7 @@ namespace r2d2 {
         uint8_t receive_byte();
 
     public:
-        hardware_usart_c(unsigned int baudrate, uart_ports_c usart_port) ;
+        hardware_usart_c(unsigned int baudrate, usart_ports_c usart_port);
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.
@@ -40,7 +46,7 @@ namespace r2d2 {
         /// used for char arrays to quickly send more than one byte
         /// In practice useing this fuction is more stable than repeated use of
         /// send_byte() Especially when the values are repeated.
-        hardware_usart_c &operator<<(const char *c) ;
+        hardware_usart_c &operator<<(const char *c);
 
         /// @brief enables the internal USART controller
         void enable() override;
@@ -74,4 +80,4 @@ namespace r2d2 {
         unsigned int available() override;
 
     };
-}; // namespace r2d2
+}; // namespace r2d2::usart
