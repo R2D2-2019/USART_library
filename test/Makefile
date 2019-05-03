@@ -9,11 +9,9 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-#SOURCES := $(wildcard ../code/src/*.cpp)
 SOURCES := ../code/src/test_usart.cpp
 
 # header files in this project
-# HEADERS := $(wildcard ../code/headers/*.hpp)
 HEADERS := ../code/headers/test_usart.hpp ../code/headers/uart_ports.hpp
 
 # other places to look for files for this project

@@ -9,8 +9,6 @@ namespace r2d2 {
 
     class test_usart_c : public usart_connection_c {
     private:
-        unsigned int baudrate;
-        uart_ports_c usart_port;
         queue_c<uint8_t, 250> receive_buffer;
 
 
@@ -18,7 +16,7 @@ namespace r2d2 {
 
         test_usart_c();
 
-        /// @brief does not actualy disable anything
+        /// @brief does not actualy enable anything
         void enable() override;
 
         /// @brief does not actualy disable anyting
@@ -37,7 +35,7 @@ namespace r2d2 {
         uint8_t receive() override;
 
         ///@brief returns true if char is available
-        ///@return bool always true
+        ///@return bool false if queue is empty, true if not
         bool char_available() override;
 
         ///@brief returns receive()
@@ -45,7 +43,7 @@ namespace r2d2 {
         char getc() override;
 
         ///@brief returns 1
-        ///@return unsigned int always 1
+        ///@return unsigned int the amount of bytes in queue
         unsigned int available() override;
 
 
@@ -58,7 +56,7 @@ namespace r2d2 {
 
         /// @brief sets one byte the test usart will return
         /// @param byte to be returned in receive
-        void set_receive_byte(const uint8_t byte);
+        void add_receive_byte(const uint8_t byte);
 
     };
 };

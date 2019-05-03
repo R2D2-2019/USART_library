@@ -40,18 +40,18 @@ namespace r2d2 {
     void test_usart_c::set_receive_string(const std::string &str) {
         receive_buffer.clear();
         for(char c : str){
-            set_receive_byte(c);
+            add_receive_byte(c);
         }
     }
 
     void test_usart_c::set_receive_bytes(const std::vector<uint8_t> &bytes){
         receive_buffer.clear();
         for(auto &byte : bytes){
-            set_receive_byte(byte);
+            add_receive_byte(byte);
         }
     }
 
-    void test_usart_c::set_receive_byte(const uint8_t byte){
+    void test_usart_c::add_receive_byte(const uint8_t byte){
         receive_buffer.push(byte);
     }
 };
