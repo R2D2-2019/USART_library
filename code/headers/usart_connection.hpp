@@ -4,7 +4,7 @@
 /// @author     Patrick Dekker
 #pragma once
 
-#include <hwlib.hpp>
+#include <cstdint>
 
 namespace r2d2::usart {
     /// @brief  base class for usart implementation

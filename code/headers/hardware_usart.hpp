@@ -18,8 +18,6 @@ namespace r2d2::usart {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        bool usart_initialized = true;
-        usart_ports_c usart_port;
         queue_c<uint8_t, 250> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -80,5 +78,6 @@ namespace r2d2::usart {
         /// @brief returns available data in buffer
         /// @return amount of uint8_t's in buffer
         unsigned int available() override;
+
     };
 }; // namespace r2d2::usart

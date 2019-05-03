@@ -1,62 +1,53 @@
 #include <hardware_usart.hpp>
 
 namespace r2d2::usart {
-    bool hardware_usart_c::transmit_ready() {
-        return (hardware_usart->US_CSR & 2);
-    }
+    enum class peripheral {
+        peripheral_a,
+        peripheral_b
+    };
 
-    void hardware_usart_c::send_byte(const uint8_t &b) {
-        while (!transmit_ready()) {
+    struct hw_usart_s {
+        Usart *usart;
+        uint32_t rx_mask;
+        uint32_t tx_mask;
+        Pio * pio;
+        peripheral periph;
+        uint16_t id;
+    };
+
+    const static hw_usart_s usart[uint8_t(usart_ports_c::UART_SIZE)] = {
+        {USART0, PIO_PA10A_RXD0, PIO_PA11A_TXD0, PIOA, peripheral::peripheral_a, ID_USART0},
+        {USART1, PIO_PA12A_RXD1, PIO_PA13A_TXD1, PIOA, peripheral::peripheral_a, ID_USART1},
+        {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
+    };
+
+    void set_peripheral(Pio * pio, uint32_t mask, peripheral p) {
+        uint32_t t = pio->PIO_ABSR;
+
+        if (p == peripheral::peripheral_a) {
+            pio->PIO_ABSR &= (~mask & t);
+        } else {
+            pio->PIO_ABSR = (mask | t);
         }
-        hardware_usart->US_THR = b;
-    }
 
-    uint8_t hardware_usart_c::receive_byte() {
-        return hardware_usart->US_RHR;
-    }
+        // remove pin from pio controller
+        pio->PIO_PDR = mask;
+    };
 
     hardware_usart_c::hardware_usart_c(unsigned int baudrate,
                                        usart_ports_c usart_port)
-        : baudrate(baudrate), usart_port(usart_port) {
-        if (usart_port == usart_ports_c::uart1) {
+        : baudrate(baudrate) {
 
-            hardware_usart = USART0;
-
-            PIOA->PIO_PDR = PIO_PA10;
-            PIOA->PIO_ABSR &= ~PIO_PA10;
-            PIOA->PIO_PDR = PIO_PA11;
-            PIOA->PIO_ABSR &= ~PIO_PA11;
-
-            PMC->PMC_PCER0 = (0x01 << ID_USART0);
-        } else if (usart_port == usart_ports_c::uart2) {
-            hardware_usart = USART1;
-
-            PIOA->PIO_PDR = PIO_PA12;
-            PIOA->PIO_ABSR &= ~PIO_PA12;
-            PIOA->PIO_PDR = PIO_PA13;
-            PIOA->PIO_ABSR &= ~PIO_PA13;
-
-            PMC->PMC_PCER0 = (0x01 << ID_USART1);
-        } else if (usart_port == usart_ports_c::uart3) {
-
-            hardware_usart = USART3;
-
-            PIOD->PIO_PDR = PIO_PD4;
-            PIOD->PIO_ABSR |= PIO_PD4;
-            PIOD->PIO_PDR = PIO_PD5;
-            PIOD->PIO_ABSR |= PIO_PD5;
-
-            PMC->PMC_PCER0 = (0x01 << ID_USART3);
-        } else if (usart_port == usart_ports_c::uart0) {
-
-            // NO! its probably not a good idea to use this, it is already in
-            // use by the hwlib::cout stuff hardware_usart = UART; PIOA->PIO_PDR
-            // = PIO_PA8; PIOA->PIO_ABSR &= ~PIO_PA8; PIOA->PIO_PDR   = PIO_PA9;
-            // PIOA->PIO_ABSR &= ~PIO_PA9;
-
-            // PMC->PMC_PCER0 = ( 0x01 << ID_UART );*/
-            usart_initialized = false;
+        if (usart_port == usart_ports_c::UART_SIZE){
+            HWLIB_PANIC_WITH_LOCATION;
         }
+
+        const auto &curr = usart[uint8_t(usart_port)];
+
+        hardware_usart = curr.usart;
+        set_peripheral(curr.pio, curr.rx_mask, curr.periph);
+        set_peripheral(curr.pio, curr.tx_mask, curr.periph);
+        PMC->PMC_PCER0 = (0x01 << curr.id);
 
         disable();
 
@@ -81,17 +72,27 @@ namespace r2d2::usart {
         return *this;
     }
 
-    void hardware_usart_c::enable() {
-        if (hardware_usart) {
-            hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
+    bool hardware_usart_c::transmit_ready() {
+        return (hardware_usart->US_CSR & 2);
+    }
+
+    void hardware_usart_c::send_byte(const uint8_t &b) {
+        while (!transmit_ready()) {
         }
+        hardware_usart->US_THR = b;
+    }
+
+    uint8_t hardware_usart_c::receive_byte() {
+        return hardware_usart->US_RHR;
+    }
+
+    void hardware_usart_c::enable() {
+        hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
     }
 
     void hardware_usart_c::disable() {
-        if (hardware_usart) {
-            hardware_usart->US_CR =
+        hardware_usart->US_CR =
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
-        }
     }
 
     bool hardware_usart_c::send(const uint8_t c) {
