@@ -34,7 +34,7 @@ namespace r2d2 {
     }
 
     unsigned int test_usart_c::available() {
-        return !receive_buffer.empty();
+        return receive_buffer.size();
     }
 
     void test_usart_c::set_receive_string(const std::string &str) {
