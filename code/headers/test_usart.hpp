@@ -7,13 +7,13 @@
 
 namespace r2d2::usart {
 
+    template <size_t buffer_length = 250>
     class test_usart_c : public usart_connection_c {
     private:
         queue_c<uint8_t, 250> receive_buffer;
 
     public:
-
-        test_usart_c();
+        test_usart_c(){}
 
         /// @brief does not actualy enable anything
         void enable() override;

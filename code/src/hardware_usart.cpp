@@ -1,6 +1,7 @@
 #include <hardware_usart.hpp>
 
 namespace r2d2::usart {
+
     enum class peripheral {
         peripheral_a,
         peripheral_b
@@ -15,7 +16,7 @@ namespace r2d2::usart {
         uint16_t id;
     };
 
-    const static hw_usart_s usart[uint8_t(usart_ports_c::UART_SIZE)] = {
+    const static hw_usart_s usart[uint8_t(usart_ports::UART_SIZE)] = {
         {USART0, PIO_PA10A_RXD0, PIO_PA11A_TXD0, PIOA, peripheral::peripheral_a, ID_USART0},
         {USART1, PIO_PA12A_RXD1, PIO_PA13A_TXD1, PIOA, peripheral::peripheral_a, ID_USART1},
         {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
@@ -34,11 +35,12 @@ namespace r2d2::usart {
         pio->PIO_PDR = mask;
     };
 
-    hardware_usart_c::hardware_usart_c(unsigned int baudrate,
-                                       usart_ports_c usart_port)
+    template <size_t buffer_length>
+    hardware_usart_c<buffer_length>::hardware_usart_c(unsigned int baudrate,
+                                       usart_ports usart_port)
         : baudrate(baudrate) {
 
-        if (usart_port == usart_ports_c::UART_SIZE){
+        if (usart_port == usart_ports::UART_SIZE){
             HWLIB_PANIC_WITH_LOCATION;
         }
 
@@ -60,51 +62,61 @@ namespace r2d2::usart {
         enable();
     }
 
-    hardware_usart_c &hardware_usart_c::operator<<(uint8_t byte) {
+    template <size_t buffer_length>
+    hardware_usart_c<buffer_length> &hardware_usart_c<buffer_length>::operator<<(uint8_t byte) {
         send_byte(byte);
         return *this;
     }
 
-    hardware_usart_c &hardware_usart_c::operator<<(const char *c) {
+    template <size_t buffer_length>
+    hardware_usart_c<buffer_length> &hardware_usart_c<buffer_length>::operator<<(const char *c) {
         for (const char *p = c; *p != '\0'; p++) {
             send_byte(*p);
         }
         return *this;
     }
 
-    bool hardware_usart_c::transmit_ready() {
+    template <size_t buffer_length>
+    bool hardware_usart_c<buffer_length>::transmit_ready() {
         return (hardware_usart->US_CSR & 2);
     }
 
-    void hardware_usart_c::send_byte(const uint8_t &b) {
+    template <size_t buffer_length>
+    void hardware_usart_c<buffer_length>::send_byte(const uint8_t &b) {
         while (!transmit_ready()) {
         }
         hardware_usart->US_THR = b;
     }
 
-    uint8_t hardware_usart_c::receive_byte() {
+    template <size_t buffer_length>
+    uint8_t hardware_usart_c<buffer_length>::receive_byte() {
         return hardware_usart->US_RHR;
     }
 
-    void hardware_usart_c::enable() {
+    template <size_t buffer_length>
+    void hardware_usart_c<buffer_length>::enable() {
         hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
     }
 
-    void hardware_usart_c::disable() {
+    template <size_t buffer_length>
+    void hardware_usart_c<buffer_length>::disable() {
         hardware_usart->US_CR =
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
     }
 
-    bool hardware_usart_c::send(const uint8_t c) {
+    template <size_t buffer_length>
+    bool hardware_usart_c<buffer_length>::send(const uint8_t c) {
         send_byte(c);
         return true;
     }
 
-    void hardware_usart_c::putc(char c) {
+    template <size_t buffer_length>
+    void hardware_usart_c<buffer_length>::putc(char c) {
         send_byte(c);
     }
 
-    uint8_t hardware_usart_c::receive() {
+    template <size_t buffer_length>
+    uint8_t hardware_usart_c<buffer_length>::receive() {
         if (!input_buffer.size()) {
             return 0;
         }
@@ -112,18 +124,21 @@ namespace r2d2::usart {
         return input_buffer.copy_and_pop();
     }
 
-    bool hardware_usart_c::char_available() {
+    template <size_t buffer_length>
+    bool hardware_usart_c<buffer_length>::char_available() {
         return (available() > 0);
     }
 
-    char hardware_usart_c::getc() {
+    template <size_t buffer_length>
+    char hardware_usart_c<buffer_length>::getc() {
         if (available() > 0) {
             return receive();
         }
         return 0;
     }
 
-    unsigned int hardware_usart_c::available() {
+    template <size_t buffer_length>
+    unsigned int hardware_usart_c<buffer_length>::available() {
         if ((hardware_usart->US_CSR & 1) != 0) {
             input_buffer.push(receive_byte());
         }

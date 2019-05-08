@@ -5,7 +5,8 @@
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {
-    enum class usart_ports_c {
+
+    enum class usart_ports {
         uart1 = 0,
         uart2,
         uart3,
@@ -13,11 +14,12 @@ namespace r2d2::usart {
         UART_SIZE
     };
 
+    template <size_t buffer_length = 250>
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        queue_c<uint8_t, 250> input_buffer;
+        queue_c<uint8_t, buffer_length> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
@@ -32,7 +34,7 @@ namespace r2d2::usart {
         uint8_t receive_byte();
 
     public:
-        hardware_usart_c(unsigned int baudrate, usart_ports_c usart_port);
+        hardware_usart_c(unsigned int baudrate, usart_ports usart_port);
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.
