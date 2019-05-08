@@ -9,7 +9,7 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := ../code/src/test_usart.cpp
+SOURCES := 
 
 # header files in this project
 HEADERS := ../code/headers/test_usart.hpp
