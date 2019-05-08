@@ -1,6 +1,6 @@
 #include <usart_connection.hpp>
 
-namespace r2d2 {
+namespace r2d2::usart {
     usart_connection_c &usart_connection_c::operator<<(uint8_t byte) {
         send(byte);
         return *this;
@@ -12,4 +12,4 @@ namespace r2d2 {
         }
         return *this;
     }
-}
+} // namespace r2d2::usart
