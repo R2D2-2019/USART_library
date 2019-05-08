@@ -14,7 +14,7 @@ namespace r2d2::usart {
         uart2,
         uart3,
         // only for determining how many uart ports there are
-                UART_SIZE
+        UART_SIZE
     };
 
     enum class peripheral {
@@ -180,7 +180,7 @@ namespace r2d2::usart {
         unsigned int available() override {
            if ((hardware_usart->US_CSR & 1) != 0) {
                 input_buffer.push(receive_byte());
-         }
+            }
 
             return input_buffer.size();
         }
