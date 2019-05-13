@@ -12,6 +12,12 @@ USART               ?= ../../../libraries/USART_library
 include              $(USART)/Makefile.inc
 ```
 
+Though be sure you add those lines above these lines:
+```Makefile
+# Defer to the bmptk/Makefile.inc to do the work
+include $(BMPTK)/Makefile.inc
+```
+
 Then you'll be able to include the library like so in your project files:
 **Note:** always use the base class `usart_connection_c` as variable type and parameters for your classes,
  this way you can either use the test_usart_c for native applications or use the hardware_usart_c for embedded aplications
