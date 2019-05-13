@@ -7,10 +7,10 @@
 
 namespace r2d2::usart {
 
-    template <size_t buffer_length = 250>
+    template <size_t bufferLength = 250>
     class test_usart_c : public usart_connection_c {
     private:
-        queue_c<uint8_t, 250> receive_buffer;
+        queue_c<uint8_t, bufferLength> receive_buffer;
 
     public:
         test_usart_c(){}

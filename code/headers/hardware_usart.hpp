@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _HARDWARE_USART_CPP
-#define _HARDWARE_USART_CPP
-
 #include <hwlib.hpp>
 #include <queue.hpp>
 #include <usart_connection.hpp>
@@ -26,7 +23,7 @@ namespace r2d2::usart {
         Usart *usart;
         uint32_t rx_mask;
         uint32_t tx_mask;
-        Pio * pio;
+        Pio *pio;
         peripheral periph;
         uint16_t id;
     };
@@ -37,7 +34,7 @@ namespace r2d2::usart {
             {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
     };
 
-    void set_peripheral(Pio * pio, uint32_t mask, peripheral p) {
+    void set_peripheral(Pio *pio, uint32_t mask, peripheral p) {
         uint32_t t = pio->PIO_ABSR;
 
         if (p == peripheral::peripheral_a) {
@@ -50,12 +47,12 @@ namespace r2d2::usart {
         pio->PIO_PDR = mask;
     };
 
-    template <size_t buffer_length = 250>
+    template <size_t bufferLength = 250>
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        queue_c<uint8_t, buffer_length> input_buffer;
+        queue_c<uint8_t, bufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
@@ -73,15 +70,13 @@ namespace r2d2::usart {
 
         /// @brief receive a byte by reading the US_RHR register
         /// @return byte received
-        uint8_t receive_byte(){
+        uint8_t receive_byte() {
             return hardware_usart->US_RHR;
         }
 
     public:
         hardware_usart_c(unsigned int baudrate, usart_ports usart_port)
-
         : baudrate(baudrate) {
-
             if (usart_port == usart_ports::UART_SIZE){
                 HWLIB_PANIC_WITH_LOCATION;
             }
@@ -103,12 +98,13 @@ namespace r2d2::usart {
 
             enable();
         }
+
         /// @brief char output operator
         ///
         /// Although calling send_byte should do the exact same thing.
         /// In practice useing this fuction is more stable
         /// Especially when the values are repeated.
-        hardware_usart_c &operator<<(uint8_t byte){
+        hardware_usart_c &operator<<(uint8_t byte) {
             send_byte(byte);
             return *this;
         }
@@ -169,7 +165,7 @@ namespace r2d2::usart {
         /// @brief receive char via usart
         /// @return char received
         char getc() override {
-            if (available() > 0) {
+            if (char_available()) {
                 return receive();
             }
             return 0;
@@ -187,6 +183,3 @@ namespace r2d2::usart {
 
     };
 }; // namespace r2d2::usart
-
-
-#endif
