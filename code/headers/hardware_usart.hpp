@@ -47,12 +47,12 @@ namespace r2d2::usart {
         pio->PIO_PDR = mask;
     };
 
-    template <size_t bufferLength = 250>
+    template <size_t BufferLength = 250>
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        queue_c<uint8_t, bufferLength> input_buffer;
+        queue_c<uint8_t, BufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
