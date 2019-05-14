@@ -171,7 +171,7 @@ namespace r2d2::usart {
             return 0;
         }
 
-        /// @brief returns available data in buffer
+        /// @brief returns amount of available data in buffer
         /// @return amount of uint8_t's in buffer
         unsigned int available() override {
            if ((hardware_usart->US_CSR & 1) != 0) {
