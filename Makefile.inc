@@ -20,6 +20,9 @@ ifeq ($(TARGET), native)
 	HEADERS += $(USART)/code/headers/test_usart.hpp
 	
 else
+    # source files in this library
+    SOURCES += $(USART)/code/src/hardware_usart.cpp
+
 	# header files in this library
 	HEADERS += $(USART)/code/headers/hardware_usart.hpp
 
