@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hwlib.hpp>
-#include <queue.hpp>
+#include <ringbuffer.hpp>
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {
@@ -47,12 +47,12 @@ namespace r2d2::usart {
         pio->PIO_PDR = mask;
     };
 
-    template <size_t BufferLength = 250>
+    template <size_t BufferLength = 256>
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
         unsigned int baudrate;
-        queue_c<uint8_t, BufferLength> input_buffer;
+        ringbuffer_c<uint8_t, BufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
@@ -153,7 +153,7 @@ namespace r2d2::usart {
                 return 0;
             }
 
-            return input_buffer.copy_and_pop();
+            return input_buffer.copy_and_pop_front();
         }
 
         /// @brief check if char is available
