@@ -16,15 +16,12 @@ SOURCES += $(USART)/code/src/usart_connection.cpp
 HEADERS += $(USART)/code/headers/usart_connection.hpp
 
 ifeq ($(TARGET), native)
-	# source files in this library
-	SOURCES += $(USART)/code/src/test_usart.cpp
-
 	# header files in this library
 	HEADERS += $(USART)/code/headers/test_usart.hpp
 	
 else
-	# source files in this library
-	SOURCES += $(USART)/code/src/hardware_usart.cpp
+    # source files in this library
+    SOURCES += $(USART)/code/src/hardware_usart.cpp
 
 	# header files in this library
 	HEADERS += $(USART)/code/headers/hardware_usart.hpp
