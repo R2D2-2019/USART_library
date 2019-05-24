@@ -50,7 +50,6 @@ namespace r2d2::usart {
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
-        unsigned int baudrate;
         queue_c<uint8_t, BufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -74,8 +73,7 @@ namespace r2d2::usart {
         }
 
     public:
-        hardware_usart_c(unsigned int baudrate, usart_ports usart_port)
-        : baudrate(baudrate) {
+        hardware_usart_c(unsigned int baudrate, usart_ports usart_port) {
             if (usart_port == usart_ports::UART_SIZE){
                 HWLIB_PANIC_WITH_LOCATION;
             }
