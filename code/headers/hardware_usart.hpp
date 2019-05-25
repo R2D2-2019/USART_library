@@ -112,7 +112,7 @@ namespace r2d2::usart {
         }
 
         template <uint32_t mask>
-        void set_peripheral() {
+        constexpr void set_peripheral() {
             uint32_t t = detail::pio::port<typename Bus::pio>->PIO_ABSR;
 
             if constexpr (std::is_same_v<typename Bus::periph,
@@ -125,6 +125,15 @@ namespace r2d2::usart {
             // remove pin from pio controller
             detail::pio::port<typename Bus::pio>->PIO_PDR = mask;
         };
+
+        constexpr void enable() override {
+            detail::usart::port<Bus>->US_CR = UART_CR_RXEN | UART_CR_TXEN;
+        }
+
+        constexpr void disable() override {
+            detail::usart::port<Bus>->US_CR =
+                UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
+        }
 
     public:
         hardware_usart_c(unsigned int baudrate) {
@@ -205,22 +214,6 @@ namespace r2d2::usart {
             return input_buffer.size();
         }
 
-        /**
-         * @brief enables the internal USART controller
-         *
-         */
-        void enable() override {
-            detail::usart::port<Bus>->US_CR = UART_CR_RXEN | UART_CR_TXEN;
-        }
-
-        /**
-         * @brief disables the internal USART controller
-         *
-         */
-        void disable() override {
-            detail::usart::port<Bus>->US_CR =
-                UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
-        }
 
         /**
          * @brief Interrupt handler for receiving data when the cpu is doing
