@@ -7,7 +7,7 @@ int main(void) {
     hwlib::wait_ms(1000);
     hwlib::cout << "this works on arduino";
 
-    auto usart = r2d2::usart::hardware_usart_c<>(9600, r2d2::usart::usart_ports::uart1);
+    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
 
     uint8_t count = 0;
 
