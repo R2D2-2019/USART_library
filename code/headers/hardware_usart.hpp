@@ -232,7 +232,12 @@ namespace r2d2::usart {
          *
          */
         constexpr static void _isr_handler() {
-            if ((detail::usart::port<Bus>->US_CSR & 1) != 0) {
+            // read the status register
+            uint32_t status = detail::usart::port<Bus>->US_CSR &
+                              detail::usart::port<Bus>->US_IMR;
+
+            // check if the rx ready bit is set
+            if ((status & US_CSR_RXRDY)) {
                 input_buffer.push(receive_byte());
             }
         }
