@@ -18,14 +18,18 @@
 
 namespace r2d2::usart {
     namespace detail::pio {
+        // helper structs for the peripherals
         struct periph_a {};
         struct periph_b {};
 
+        // helper structs for the pio's
         struct pioa {};
         struct piod {};
+        struct piob {};
     }; // namespace detail::pio
 
     struct usart0 {
+        // pin D18, D19
         constexpr static uint32_t rx = PIO_PA10A_RXD0;
         constexpr static uint32_t tx = PIO_PA11A_TXD0;
 
@@ -34,6 +38,7 @@ namespace r2d2::usart {
     };
 
     struct usart1 {
+        // pin D16, D17
         constexpr static uint32_t rx = PIO_PA12A_RXD1;
         constexpr static uint32_t tx = PIO_PA13A_TXD1;
 
@@ -41,7 +46,17 @@ namespace r2d2::usart {
         using pio = detail::pio::pioa;
     };
 
+    struct usart2 {
+        // pin A11, D52
+        constexpr static uint32_t rx = PIO_PB21A_RXD2;
+        constexpr static uint32_t tx = PIO_PB20A_TXD2;
+
+        using periph = detail::pio::periph_a;
+        using pio = detail::pio::piob;
+    };
+
     struct usart3 {
+        // pin D14, D15
         constexpr static uint32_t rx = PIO_PD5B_RXD3;
         constexpr static uint32_t tx = PIO_PD4B_TXD3;
 
@@ -59,6 +74,9 @@ namespace r2d2::usart {
             Pio *const port<pioa> = PIOA;
 
             template <>
+            Pio *const port<piob> = PIOB;
+
+            template <>
             Pio *const port<piod> = PIOD;
         } // namespace pio
 
@@ -74,6 +92,9 @@ namespace r2d2::usart {
             Usart *const port<usart1> = USART1;
 
             template <>
+            Usart *const port<usart2> = USART2;
+
+            template <>
             Usart *const port<usart3> = USART3;
         } // namespace usart
 
@@ -87,6 +108,9 @@ namespace r2d2::usart {
 
             template <>
             constexpr uint32_t id<usart1> = ID_USART1;
+
+            template <>
+            constexpr uint32_t id<usart2> = ID_USART2;
 
             template <>
             constexpr uint32_t id<usart3> = ID_USART3;
@@ -117,7 +141,7 @@ namespace r2d2::usart {
 
             if constexpr (std::is_same_v<typename Bus::periph,
                                          detail::pio::periph_a>) {
-                detail::pio::port<typename Bus::pio>->PIO_ABSR &= (~mask & t);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR = (~mask & t);
             } else {
                 detail::pio::port<typename Bus::pio>->PIO_ABSR = (mask | t);
             }
@@ -243,6 +267,10 @@ void __USART0_Handler() {
 
 void __USART1_Handler() {
     r2d2::usart::hardware_usart_c<r2d2::usart::usart1>::_isr_handler();
+}
+
+void __USART2_Handler() {
+    r2d2::usart::hardware_usart_c<r2d2::usart::usart2>::_isr_handler();
 }
 
 void __USART3_Handler() {
