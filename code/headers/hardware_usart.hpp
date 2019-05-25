@@ -28,8 +28,16 @@ namespace r2d2::usart {
         struct piob {};
     }; // namespace detail::pio
 
+    /**
+     * @brief Struct with the data for usart0.
+     *
+     * Usart0 tx is pin: D18.
+     * Usart0 rx is pin: D19.
+     *
+     * With labels TX1 and RX1 on the arduino due.
+     *
+     */
     struct usart0 {
-        // pin D18, D19
         constexpr static uint32_t rx = PIO_PA10A_RXD0;
         constexpr static uint32_t tx = PIO_PA11A_TXD0;
 
@@ -37,8 +45,16 @@ namespace r2d2::usart {
         using pio = detail::pio::pioa;
     };
 
+    /**
+     * @brief Struct with the data for usart1.
+     *
+     * Usart1 tx is pin: D16.
+     * Usart1 rx is pin: D17.
+     *
+     * With labels TX2 and RX2 on the arduino due.
+     *
+     */
     struct usart1 {
-        // pin D16, D17
         constexpr static uint32_t rx = PIO_PA12A_RXD1;
         constexpr static uint32_t tx = PIO_PA13A_TXD1;
 
@@ -46,8 +62,17 @@ namespace r2d2::usart {
         using pio = detail::pio::pioa;
     };
 
+    /**
+     * @brief Struct with the data for usart2.
+     *
+     * Usart2 tx is pin: A11.
+     * Usart2 rx is pin: D52.
+     *
+     * This usart port doesn't have TX/RX labels for the pins. 
+     * Just A11 and 52.
+     *
+     */
     struct usart2 {
-        // pin A11, D52
         constexpr static uint32_t rx = PIO_PB21A_RXD2;
         constexpr static uint32_t tx = PIO_PB20A_TXD2;
 
@@ -55,8 +80,16 @@ namespace r2d2::usart {
         using pio = detail::pio::piob;
     };
 
+    /**
+     * @brief Struct with the data for usart3.
+     *
+     * Usart3 tx is pin: D14.
+     * Usart3 rx is pin: D15.
+     *
+     * With labels TX3 and RX3 on the arduino due.
+     *
+     */
     struct usart3 {
-        // pin D14, D15
         constexpr static uint32_t rx = PIO_PD5B_RXD3;
         constexpr static uint32_t tx = PIO_PD4B_TXD3;
 
