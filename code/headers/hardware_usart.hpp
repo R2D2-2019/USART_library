@@ -166,30 +166,6 @@ namespace r2d2::usart {
         }
 
         /**
-         * @brief Send a single byte using ostream
-         *
-         * @param byte
-         * @return hardware_usart_c&
-         */
-        hardware_usart_c &operator<<(uint8_t byte) {
-            send(byte);
-            return *this;
-        }
-
-        /**
-         * @brief operator << writes a string with the usart
-         *
-         * @param c c-style string to send
-         * @return usart_connection_c&
-         */
-        hardware_usart_c &operator<<(const char *c) {
-            for (const char *p = c; *p != '\0'; p++) {
-                send(*p);
-            }
-            return *this;
-        }
-
-        /**
          * @brief Write a uint8_t with the usart
          *
          * @param c data to send
