@@ -15,3 +15,17 @@ namespace r2d2::usart {
         pio->PIO_PDR = mask;
     };
 }
+
+extern "C"{
+void __USART0_Handler(){
+
+}
+
+void __USART1_Handler(){
+
+}
+
+void __USART3_Handler(){
+
+}
+}
