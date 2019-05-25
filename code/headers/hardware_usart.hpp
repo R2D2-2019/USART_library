@@ -126,11 +126,11 @@ namespace r2d2::usart {
             detail::pio::port<typename Bus::pio>->PIO_PDR = mask;
         };
 
-        constexpr void enable() override {
+        constexpr void enable() {
             detail::usart::port<Bus>->US_CR = UART_CR_RXEN | UART_CR_TXEN;
         }
 
-        constexpr void disable() override {
+        constexpr void disable() {
             detail::usart::port<Bus>->US_CR =
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
         }
@@ -213,7 +213,6 @@ namespace r2d2::usart {
         unsigned int available() override {
             return input_buffer.size();
         }
-
 
         /**
          * @brief Interrupt handler for receiving data when the cpu is doing
