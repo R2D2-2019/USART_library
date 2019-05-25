@@ -50,7 +50,7 @@ namespace r2d2::usart {
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
-        queue_c<uint8_t, BufferLength> input_buffer;
+        ringbuffer_c<uint8_t, BufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
