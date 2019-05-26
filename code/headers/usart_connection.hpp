@@ -11,30 +11,15 @@
  */
 
 #include <cstdint>
+#include <hwlib.hpp>
 
 namespace r2d2::usart {
     /**
      * @brief Base class for the usart implementation
      *
      */
-    class usart_connection_c {
+    class usart_connection_c : public hwlib::ostream {
     public:
-        /**
-         * @brief operator << writes a byte with the usart
-         *
-         * @param byte to send
-         * @return usart_connection_c&
-         */
-        usart_connection_c &operator<<(uint8_t byte);
-
-        /**
-         * @brief operator << writes a string with the usart
-         *
-         * @param c c-style string to send
-         * @return usart_connection_c&
-         */
-        usart_connection_c &operator<<(const char *c);
-
         /**
          * @brief Write a uint8_t with the usart
          *
@@ -63,7 +48,7 @@ namespace r2d2::usart {
          *
          * @param c
          */
-        virtual void putc(char c) {
+        void putc(char c) override {
             send(static_cast<uint8_t>(c));
         }
 
@@ -85,6 +70,12 @@ namespace r2d2::usart {
         virtual char getc() {
             return static_cast<char>(receive());
         }
+
+        /**
+         * @brief flush override for hwlib::ostream
+         * 
+         */
+        void flush() override {}
     };
 
 } // namespace r2d2::usart
