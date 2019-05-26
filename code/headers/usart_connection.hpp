@@ -18,7 +18,7 @@ namespace r2d2::usart {
      * @brief Base class for the usart implementation
      *
      */
-    class usart_connection_c : public hwlib::ostream {
+    class usart_connection_c : public hwlib::ostream, public hwlib::istream {
     public:
         /**
          * @brief Write a uint8_t with the usart
@@ -44,7 +44,7 @@ namespace r2d2::usart {
         virtual const unsigned int available() = 0;
 
         /**
-         * @brief Write a char with the usart
+         * @brief Write a char with the usart for hwlib ostream
          *
          * @param c
          */
@@ -58,24 +58,30 @@ namespace r2d2::usart {
          * @return true if data is available
          * @return false if no data is available
          */
-        virtual const bool char_available() {
+        virtual bool char_available() override {
             return static_cast<bool>(available());
         }
 
         /**
-         * @brief Get a char if available
+         * @brief Read and return a single character or '\0'
+         * This function reads and returns a single character.
+         * When no character is available it waits for one.
          *
          * @return char
          */
-        virtual char getc() {
+        virtual char getc() override {
+            while (!char_available()) {
+                // wait until a char is available
+            }
             return static_cast<char>(receive());
         }
 
         /**
          * @brief flush override for hwlib::ostream
-         * 
+         *
          */
-        void flush() override {}
+        void flush() override {
+        }
     };
 
 } // namespace r2d2::usart
