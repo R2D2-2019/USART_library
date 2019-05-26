@@ -34,8 +34,6 @@ namespace r2d2::usart {
             {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
     };
 
-    void set_peripheral(Pio *pio, uint32_t mask, peripheral p);
-
     template <size_t BufferLength = 256>
     class hardware_usart_c : public usart_connection_c {
     private:
@@ -61,6 +59,19 @@ namespace r2d2::usart {
         /// @return byte received
         uint8_t receive_byte() {
             return hardware_usart->US_RHR;
+        }
+
+        void set_peripheral(Pio *pio, uint32_t mask, peripheral p) {
+            uint32_t t = pio->PIO_ABSR;
+
+            if (p == peripheral::peripheral_a) {
+                pio->PIO_ABSR &= (~mask & t);
+            } else {
+                pio->PIO_ABSR = (mask | t);
+            }
+
+            // remove pin from pio controller
+            pio->PIO_PDR = mask;            
         }
 
     public:
