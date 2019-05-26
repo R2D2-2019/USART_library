@@ -56,7 +56,7 @@ namespace r2d2::usart {
          *
          * @return unsigned int amount of bytes
          */
-        virtual unsigned int available() = 0;
+        virtual const unsigned int available() = 0;
 
         /**
          * @brief Write a char with the usart
@@ -73,7 +73,7 @@ namespace r2d2::usart {
          * @return true if data is available
          * @return false if no data is available
          */
-        virtual bool char_available() {
+        virtual const bool char_available() {
             return static_cast<bool>(available());
         }
 

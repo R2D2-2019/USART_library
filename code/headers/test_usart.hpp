@@ -55,7 +55,7 @@ namespace r2d2::usart {
          *
          * @return unsigned int amount of bytes
          */
-        unsigned int available() override {
+        const unsigned int available() override {
             return receive_buffer.size();
         }
 
