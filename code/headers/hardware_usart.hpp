@@ -1,4 +1,14 @@
 #pragma once
+/**
+ * @file hardware_usart.hpp
+ * @author Patrick Dekker
+ * @brief Hardware implementation for the usart
+ * @version 0.1
+ * @date 2019-05-24
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 
 #include <hwlib.hpp>
 #include <queue.hpp>
@@ -40,7 +50,6 @@ namespace r2d2::usart {
     class hardware_usart_c : public usart_connection_c {
     private:
         Usart *hardware_usart = nullptr;
-        unsigned int baudrate;
         queue_c<uint8_t, BufferLength> input_buffer;
 
         /// @brief check if the transmitter is ready to send
@@ -64,8 +73,7 @@ namespace r2d2::usart {
         }
 
     public:
-        hardware_usart_c(unsigned int baudrate, usart_ports usart_port)
-        : baudrate(baudrate) {
+        hardware_usart_c(unsigned int baudrate, usart_ports usart_port) {
             if (usart_port == usart_ports::UART_SIZE){
                 HWLIB_PANIC_WITH_LOCATION;
             }
@@ -129,12 +137,6 @@ namespace r2d2::usart {
            return true;
         }
 
-        /// @brief sends a char via usart
-        /// @param c: char to send
-        void putc(char c) override {
-            send_byte(c);
-        }
-
         /// @brief recieve byte bia usart
         /// @return received byte
         uint8_t receive() override {
@@ -143,21 +145,6 @@ namespace r2d2::usart {
             }
 
             return input_buffer.copy_and_pop();
-        }
-
-        /// @brief check if char is available
-        /// @return true if char is available false if not
-        bool char_available() override {
-            return (available() > 0);
-        }
-
-        /// @brief receive char via usart
-        /// @return char received
-        char getc() override {
-            if (char_available()) {
-                return receive();
-            }
-            return 0;
         }
 
         /// @brief returns amount of available data in buffer
@@ -169,7 +156,6 @@ namespace r2d2::usart {
 
             return input_buffer.size();
         }
-
     };
 }; // namespace r2d2::usart
 
