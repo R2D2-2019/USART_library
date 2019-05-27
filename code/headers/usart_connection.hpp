@@ -24,10 +24,8 @@ namespace r2d2::usart {
          * @brief Write a uint8_t with the usart
          *
          * @param c data to send
-         * @return true if the data is sended correctly
-         * @return false if the data has not been sended correctly
          */
-        virtual bool send(const uint8_t c) = 0;
+        virtual void send(const uint8_t c) = 0;
 
         /**
          * @brief Get a data from the usart

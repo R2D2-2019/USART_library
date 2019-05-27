@@ -8,7 +8,9 @@
 TEST_CASE("test_usart_c sends", "[test_usart_c]") {
     auto test_usart = r2d2::usart::test_usart_c();
 
-    REQUIRE(test_usart.send(0xAA));
+    // Todo: implement the sending side of test_usart and add a test to test the
+    // actual sending of the data and not for a true return
+    test_usart.send(0xAA);
 }
 
 TEST_CASE("test_usart_c chars availiable ", "[test_usart_c]") {

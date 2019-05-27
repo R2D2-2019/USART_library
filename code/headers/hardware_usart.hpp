@@ -68,7 +68,7 @@ namespace r2d2::usart {
      * Usart2 tx is pin: A11.
      * Usart2 rx is pin: D52.
      *
-     * This usart port doesn't have TX/RX labels for the pins. 
+     * This usart port doesn't have TX/RX labels for the pins.
      * Just A11 and 52.
      *
      */
@@ -234,18 +234,17 @@ namespace r2d2::usart {
          * @brief Write a uint8_t with the usart
          *
          * @param c data to send
-         * @return true if the data is sended correctly
-         * @return false if the data has not been sended correctly
+         *
+         * @warning currenltly this will loop until the data is put in the
+         * holding register.
          */
-        bool send(const uint8_t c) override {
+        void send(const uint8_t c) override {
             while (!transmit_ready()) {
                 // wait until transmit is ready
             }
 
             // write the byte in the Transmit holding register
             detail::usart::port<Bus>->US_THR = c;
-
-            return true;
         }
 
         /**
