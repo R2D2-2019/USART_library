@@ -1,7 +1,4 @@
 ## Hardware USART-library
-
-### This library currently only supports the arduino DUE hardware USART interface and a basic test interface for use with catch2
-
 ### Including this library
 
 When including this library, add these lines to your module's Makefile.link:
@@ -25,7 +22,7 @@ Then you'll be able to include the library like so in your project files:
 
 ### Using the usart connection
 
-The usart connection class is a child of ostream and istream thanks to this we can use the `<<` or the `>>` operators. If you want more control what to do with the data you can use `available()` to check how much data is available, use `receive()` to get that data and use `send()` to send data on the usart bus. When using `receive()` always make sure there is data available as this will give undefined behaviour when no data is available.
+The usart connection class is a child of ostream and istream thanks to this we can use the `<<` and the `>>` operator. If you want more control what to do with the data you can use `available()` to check how much data is available, use `receive()` to get that data and use `send()` to send data on the usart bus. When using `receive()` always make sure there is data available as this will give undefined behaviour when no data is available.
 
 ### Using the hardware usart
 
