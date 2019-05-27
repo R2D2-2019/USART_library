@@ -29,7 +29,7 @@ namespace r2d2::usart {
     }; // namespace detail::pio
 
     /**
-     * @brief Struct with the data for usart0.
+     * @brief Struct with the pin definitions for usart0.
      *
      * Usart0 tx is pin: D18.
      * Usart0 rx is pin: D19.
@@ -46,7 +46,7 @@ namespace r2d2::usart {
     };
 
     /**
-     * @brief Struct with the data for usart1.
+     * @brief Struct with the pin definitions for usart1.
      *
      * Usart1 tx is pin: D16.
      * Usart1 rx is pin: D17.
@@ -63,7 +63,7 @@ namespace r2d2::usart {
     };
 
     /**
-     * @brief Struct with the data for usart2.
+     * @brief Struct with the pin definitions for usart2.
      *
      * Usart2 tx is pin: A11.
      * Usart2 rx is pin: D52.
@@ -81,7 +81,7 @@ namespace r2d2::usart {
     };
 
     /**
-     * @brief Struct with the data for usart3.
+     * @brief Struct with the pin definitions for usart3.
      *
      * Usart3 tx is pin: D14.
      * Usart3 rx is pin: D15.
