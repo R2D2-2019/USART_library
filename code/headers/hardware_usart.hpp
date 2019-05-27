@@ -131,7 +131,7 @@ namespace r2d2::usart {
             Usart *const port<usart3> = USART3;
         } // namespace usart
 
-        namespace periph_id {
+        namespace peripheral_id {
             // helper structs for getting the usart id
             template <typename USART>
             constexpr uint32_t id = 0;
@@ -147,7 +147,7 @@ namespace r2d2::usart {
 
             template <>
             constexpr uint32_t id<usart3> = ID_USART3;
-        } // namespace periph_id
+        } // namespace peripheral_id
 
     } // namespace detail
 
@@ -199,7 +199,7 @@ namespace r2d2::usart {
             set_peripheral<Bus::tx>();
 
             // enable the peripheral clock for the usart
-            PMC->PMC_PCER0 = (0x01 << detail::periph_id::id<Bus>);
+            PMC->PMC_PCER0 = (0x01 << detail::peripheral_id::id<Bus>);
 
             // disable all interrupts for the usart
             detail::usart::port<Bus>->US_IDR = 0xFFFFFFFF;
@@ -207,9 +207,9 @@ namespace r2d2::usart {
             // clear the status register for old interrupts
             (void)detail::usart::port<Bus>->US_CSR;
 
-            // use the periph_id since that is the same id as the IRQn_type
+            // use the peripheral_id since that is the same id as the IRQn_type
             constexpr auto iqrn =
-                static_cast<IRQn_Type>(detail::periph_id::id<Bus>);
+                static_cast<IRQn_Type>(detail::peripheral_id::id<Bus>);
 
             // enable the nvic interrupt for the current usart
             NVIC_SetPriority(iqrn, 9);
