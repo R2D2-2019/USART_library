@@ -170,13 +170,13 @@ namespace r2d2::usart {
 
         template <uint32_t mask>
         constexpr void set_peripheral() {
-            uint32_t t = detail::pio::port<typename Bus::pio>->PIO_ABSR;
+            uint32_t absr_mask = detail::pio::port<typename Bus::pio>->PIO_ABSR;
 
             if constexpr (std::is_same_v<typename Bus::periph,
                                          detail::pio::periph_a>) {
-                detail::pio::port<typename Bus::pio>->PIO_ABSR = (~mask & t);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR = (~mask & absr_mask);
             } else {
-                detail::pio::port<typename Bus::pio>->PIO_ABSR = (mask | t);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR = (mask | absr_mask);
             }
 
             // remove pin from pio controller
