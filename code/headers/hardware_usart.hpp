@@ -170,13 +170,16 @@ namespace r2d2::usart {
 
         template <uint32_t mask>
         constexpr void set_peripheral() {
-            uint32_t curr_absr_mask = detail::pio::port<typename Bus::pio>->PIO_ABSR;
+            uint32_t curr_absr_mask =
+                detail::pio::port<typename Bus::pio>->PIO_ABSR;
 
             if constexpr (std::is_same_v<typename Bus::periph,
                                          detail::pio::periph_a>) {
-                detail::pio::port<typename Bus::pio>->PIO_ABSR = (~mask & curr_absr_mask);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR =
+                    (~mask & curr_absr_mask);
             } else {
-                detail::pio::port<typename Bus::pio>->PIO_ABSR = (mask | curr_absr_mask);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR =
+                    (mask | curr_absr_mask);
             }
 
             // remove pin from pio controller
@@ -251,12 +254,11 @@ namespace r2d2::usart {
          * @brief Get a data from the usart
          *
          * @return uint8_t
+         *
+         * @warning if you call this function without any data in the ringbuffer
+         * then this will cause undefined behaviour.
          */
         uint8_t receive() override {
-            if (!input_buffer.size()) {
-                return 0;
-            }
-
             return input_buffer.copy_and_pop_front();
         }
 
