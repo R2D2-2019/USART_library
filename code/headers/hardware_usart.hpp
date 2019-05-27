@@ -194,7 +194,6 @@ namespace r2d2::usart {
 
     public:
         hardware_usart_c(unsigned int baudrate) {
-
             // set the peripheral for the usart pins
             set_peripheral<Bus::rx>();
             set_peripheral<Bus::tx>();
