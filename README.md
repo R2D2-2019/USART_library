@@ -1,7 +1,7 @@
 ## Hardware USART-library
 ### Including this library
 
-When including this library, add these lines to your module's Makefile.link:
+When including this library, add these lines to your module's `Makefile.link`:
 
 ```Makefile
 #add USART_library
@@ -22,25 +22,24 @@ Then you'll be able to include the library like so in your project files:
 
 ### Using the usart connection
 
-The usart connection class is a child of ostream and istream thanks to this we can use the `<<` and the `>>` operator. If you want more control what to do with the data you can use `available()` to check how much data is available, receive data with `receive()` and send data with `send()`. When using `receive()` always make sure there is data available as this will give undefined behaviour when no data is available.
-
+The usart connection class is a child of ostream and istream. Thanks to this we can use the `<<` and the `>>` operators to send or receive bytes. If you want more control what to do with the data, you can use `available()` to check how much data is available, receive data with `receive()` and send data with `send()`. When using `receive()` always make sure there is data available! Not checking will cause Undefined Behaviour when no data is available.
 
 ### Using the hardware usart
 
-First we need to construct the bus we can do this as follows
+First we need to construct the bus we can do this as follows:
 ```cpp
 #include <hardware_usart.hpp>
 
 auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
 ```
-The template parameter in the class is what usart port you want to use. **Warning** this is not the same port as the labels on the arduino due. The sam3x8e chip has 4 hardware usart ports 3 of these ports have labels the other port doesnt have a label. See the doxygen or hardware_usart.hpp for the pin definitions.
+The template parameter in the class is what usart port you want to use. **Warning** this is not the same port as the labels on the Arduino Due. The sam3x8e chip has 4 hardware usart ports, 3 of these ports have labels. The other port doesn't have a label. See the Doxygen or hardware_usart.hpp for the pin definitions.
 
-The first parameter is the baudrate, 9600 is used here as an example. Check which baudrate is applicable for you. If there are multiple objects using the same usart the object that was constructed as last will set the baud rate. As this is set every time the constructor is called.
+The first parameter is the baudrate, 9600 is used here as an example. Check which baudrate is applicable for you. If there are multiple objects using the same usart the object that was constructed as last will set the baud rate, as this is set every time the constructor is called.
 
 
 ## Some examples
 
-Example of using the usart connection with a class that needs a usart.
+Example of using the usart connection with a class that needs a usart:
 ```cpp
 // include in class
 #include <usart_connection.hpp>
@@ -77,7 +76,7 @@ class hello_world_c {
 };
 ```
 
-Example of using the hardware usart with a class that needs usart
+Example of using the hardware usart with a class that needs usart:
 ```cpp
 // include in embedded main
 #include <hardware_usart.hpp>
@@ -98,7 +97,7 @@ int main() {
 
 ```
 
-Example of using the test usart to test a class that needs to receive data
+Example of using the test usart to test a class that needs to receive data:
 ```cpp
 //include in catch/native main
 #define CATCH_CONFIG_MAIN
@@ -124,8 +123,3 @@ TEST_CASE("hello world receives", "[hello_world]") {
     REQUIRE(usart.get_char() == 'A');
 }
 ```
-
-
-
-
-
