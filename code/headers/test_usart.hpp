@@ -5,9 +5,9 @@
  * @brief Catch2 Test implementation for the usart
  * @version 0.1
  * @date 2019-05-24
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 
 #include <string>
@@ -29,13 +29,10 @@ namespace r2d2::usart {
          * @brief Write a uint8_t with the usart
          *
          * @param c data to send
-         * @return true if the data is sended correctly
-         * @return false if the data has not been sended correctly
          *
          * @warning doesnt send anything at the moment
          */
-        bool send(const uint8_t c) override {
-            return true;
+        void send(const uint8_t c) override {
         }
 
         /**
@@ -55,7 +52,7 @@ namespace r2d2::usart {
          *
          * @return unsigned int amount of bytes
          */
-        unsigned int available() override {
+        const unsigned int available() override {
             return receive_buffer.size();
         }
 

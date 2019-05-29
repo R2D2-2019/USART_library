@@ -2,17 +2,26 @@
 
 #include <hardware_usart.hpp>
 int main(void) {
-  // kill the watchdog
+    // kill the watchdog
     WDT->WDT_MR = WDT_MR_WDDIS;
     hwlib::wait_ms(1000);
     hwlib::cout << "this works on arduino";
 
-    auto usart = r2d2::usart::hardware_usart_c<>(9600, r2d2::usart::usart_ports::uart1);
+    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
 
-    uint8_t count = 0;
+    char t = 'a';
 
-    for(;;){
-        usart << "Test: " << count++ << '\n';
+    for (;;) {
+        while (usart.available()) {
+            hwlib::cout << static_cast<char>(usart.receive());
+        }
+
+        usart << "Test: " << t++ << '\n';
+
+        if (t > 'z') {
+            t = 'a';
+        }
+
         hwlib::wait_ms(100);
     }
 }

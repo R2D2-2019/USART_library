@@ -5,168 +5,308 @@
  * @brief Hardware implementation for the usart
  * @version 0.1
  * @date 2019-05-24
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 
 #include <hwlib.hpp>
 #include <ringbuffer.hpp>
+#include <type_traits>
+
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {
+    namespace detail::pio {
+        // helper structs for the peripherals
+        struct periph_a {};
+        struct periph_b {};
 
-    enum class usart_ports {
-        uart1 = 0,
-        uart2,
-        uart3,
-        // only for determining how many uart ports there are
-        UART_SIZE
+        // helper structs for the pio's
+        struct pioa {};
+        struct piod {};
+        struct piob {};
+    }; // namespace detail::pio
+
+    /**
+     * @brief Struct with the pin definitions for usart0.
+     *
+     * Usart0 tx is pin: D18.
+     * Usart0 rx is pin: D19.
+     *
+     * With labels TX1 and RX1 on the arduino due.
+     *
+     */
+    struct usart0 {
+        constexpr static uint32_t rx = PIO_PA10A_RXD0;
+        constexpr static uint32_t tx = PIO_PA11A_TXD0;
+
+        using periph = detail::pio::periph_a;
+        using pio = detail::pio::pioa;
     };
 
-    enum class peripheral {
-        peripheral_a,
-        peripheral_b
+    /**
+     * @brief Struct with the pin definitions for usart1.
+     *
+     * Usart1 tx is pin: D16.
+     * Usart1 rx is pin: D17.
+     *
+     * With labels TX2 and RX2 on the arduino due.
+     *
+     */
+    struct usart1 {
+        constexpr static uint32_t rx = PIO_PA12A_RXD1;
+        constexpr static uint32_t tx = PIO_PA13A_TXD1;
+
+        using periph = detail::pio::periph_a;
+        using pio = detail::pio::pioa;
     };
 
-    struct hw_usart_s {
-        Usart *usart;
-        uint32_t rx_mask;
-        uint32_t tx_mask;
-        Pio *pio;
-        peripheral periph;
-        uint16_t id;
+    /**
+     * @brief Struct with the pin definitions for usart2.
+     *
+     * Usart2 tx is pin: A11.
+     * Usart2 rx is pin: D52.
+     *
+     * This usart port doesn't have TX/RX labels for the pins.
+     * Just A11 and 52.
+     *
+     */
+    struct usart2 {
+        constexpr static uint32_t rx = PIO_PB21A_RXD2;
+        constexpr static uint32_t tx = PIO_PB20A_TXD2;
+
+        using periph = detail::pio::periph_a;
+        using pio = detail::pio::piob;
     };
 
-    const static hw_usart_s usart[uint8_t(usart_ports::UART_SIZE)] = {
-            {USART0, PIO_PA10A_RXD0, PIO_PA11A_TXD0, PIOA, peripheral::peripheral_a, ID_USART0},
-            {USART1, PIO_PA12A_RXD1, PIO_PA13A_TXD1, PIOA, peripheral::peripheral_a, ID_USART1},
-            {USART3, PIO_PD5B_RXD3, PIO_PD4B_TXD3, PIOD, peripheral::peripheral_b, ID_USART3}
+    /**
+     * @brief Struct with the pin definitions for usart3.
+     *
+     * Usart3 tx is pin: D14.
+     * Usart3 rx is pin: D15.
+     *
+     * With labels TX3 and RX3 on the arduino due.
+     *
+     */
+    struct usart3 {
+        constexpr static uint32_t rx = PIO_PD5B_RXD3;
+        constexpr static uint32_t tx = PIO_PD4B_TXD3;
+
+        using periph = detail::pio::periph_b;
+        using pio = detail::pio::piod;
     };
 
-    template <size_t BufferLength = 256>
+    namespace detail {
+        namespace pio {
+            // helper structs for getting the pointer to the pio
+            template <typename PIO>
+            Pio *const port = nullptr;
+
+            template <>
+            Pio *const port<pioa> = PIOA;
+
+            template <>
+            Pio *const port<piob> = PIOB;
+
+            template <>
+            Pio *const port<piod> = PIOD;
+        } // namespace pio
+
+        namespace usart {
+            // helper structs for getting the pointer to the usart
+            template <typename USART>
+            Usart *const port = nullptr;
+
+            template <>
+            Usart *const port<usart0> = USART0;
+
+            template <>
+            Usart *const port<usart1> = USART1;
+
+            template <>
+            Usart *const port<usart2> = USART2;
+
+            template <>
+            Usart *const port<usart3> = USART3;
+        } // namespace usart
+
+        namespace peripheral_id {
+            // helper structs for getting the usart id
+            template <typename USART>
+            constexpr uint32_t id = 0;
+
+            template <>
+            constexpr uint32_t id<usart0> = ID_USART0;
+
+            template <>
+            constexpr uint32_t id<usart1> = ID_USART1;
+
+            template <>
+            constexpr uint32_t id<usart2> = ID_USART2;
+
+            template <>
+            constexpr uint32_t id<usart3> = ID_USART3;
+        } // namespace peripheral_id
+
+    } // namespace detail
+
+    template <typename Bus>
     class hardware_usart_c : public usart_connection_c {
     private:
-        Usart *hardware_usart = nullptr;
-        ringbuffer_c<uint8_t, BufferLength> input_buffer;
+        static inline ringbuffer_c<uint8_t, 256> input_buffer;
 
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
-        bool transmit_ready() {
-            return (hardware_usart->US_CSR & 2);
-        }
-
-        /// @brief send a byte via usart
-        /// @param b: byte to send
-        void send_byte(const uint8_t &b) {
-            while (!transmit_ready()) {
-            }
-            hardware_usart->US_THR = b;
+        constexpr static bool transmit_ready() {
+            return (detail::usart::port<Bus>->US_CSR & 2);
         }
 
         /// @brief receive a byte by reading the US_RHR register
         /// @return byte received
-        uint8_t receive_byte() {
-            return hardware_usart->US_RHR;
+        constexpr static uint8_t receive_byte() {
+            return detail::usart::port<Bus>->US_RHR;
         }
 
-        void set_peripheral(Pio *pio, uint32_t mask, peripheral p) {
-            uint32_t t = pio->PIO_ABSR;
+        template <uint32_t mask>
+        constexpr void set_peripheral() {
+            uint32_t curr_absr_mask =
+                detail::pio::port<typename Bus::pio>->PIO_ABSR;
 
-            if (p == peripheral::peripheral_a) {
-                pio->PIO_ABSR &= (~mask & t);
+            if constexpr (std::is_same_v<typename Bus::periph,
+                                         detail::pio::periph_a>) {
+                detail::pio::port<typename Bus::pio>->PIO_ABSR =
+                    (~mask & curr_absr_mask);
             } else {
-                pio->PIO_ABSR = (mask | t);
+                detail::pio::port<typename Bus::pio>->PIO_ABSR =
+                    (mask | curr_absr_mask);
             }
 
             // remove pin from pio controller
-            pio->PIO_PDR = mask;            
+            detail::pio::port<typename Bus::pio>->PIO_PDR = mask;
+        };
+
+        constexpr void enable() {
+            detail::usart::port<Bus>->US_CR = UART_CR_RXEN | UART_CR_TXEN;
+        }
+
+        constexpr void disable() {
+            detail::usart::port<Bus>->US_CR =
+                UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
         }
 
     public:
-        hardware_usart_c(unsigned int baudrate, usart_ports usart_port) {
-            if (usart_port == usart_ports::UART_SIZE){
-                HWLIB_PANIC_WITH_LOCATION;
-            }
+        hardware_usart_c(unsigned int baudrate) {
+            // set the peripheral for the usart pins
+            set_peripheral<Bus::rx>();
+            set_peripheral<Bus::tx>();
 
-            const auto &curr = usart[uint8_t(usart_port)];
+            // enable the peripheral clock for the usart
+            PMC->PMC_PCER0 = (0x01 << detail::peripheral_id::id<Bus>);
 
-            hardware_usart = curr.usart;
-            set_peripheral(curr.pio, curr.rx_mask, curr.periph);
-            set_peripheral(curr.pio, curr.tx_mask, curr.periph);
-            PMC->PMC_PCER0 = (0x01 << curr.id);
+            // disable all interrupts for the usart
+            detail::usart::port<Bus>->US_IDR = 0xFFFFFFFF;
+
+            // clear the status register for old interrupts
+            (void)detail::usart::port<Bus>->US_CSR;
+
+            // use the peripheral_id since that is the same id as the IRQn_type
+            constexpr auto iqrn =
+                static_cast<IRQn_Type>(detail::peripheral_id::id<Bus>);
+
+            // enable the nvic interrupt for the current usart
+            NVIC_SetPriority(iqrn, 9);
+            NVIC_EnableIRQ(iqrn);
 
             disable();
 
-            hardware_usart->US_BRGR = (5241600u / baudrate);
+            // write the baud rate in the BRGR register
+            detail::usart::port<Bus>->US_BRGR = (5241600u / baudrate);
 
-            hardware_usart->US_MR =
-                    UART_MR_PAR_NO | UART_MR_CHMODE_NORMAL | US_MR_CHRL_8_BIT;
-            hardware_usart->US_IDR = 0xFFFFFFFF;
+            // set the usart mode
+            detail::usart::port<Bus>->US_MR =
+                UART_MR_PAR_NO | UART_MR_CHMODE_NORMAL | US_MR_CHRL_8_BIT;
 
             enable();
+
+            // enable the interrupt for handling the receiving of data
+            detail::usart::port<Bus>->US_IER = US_IER_RXRDY;
         }
 
-        /// @brief char output operator
-        ///
-        /// Although calling send_byte should do the exact same thing.
-        /// In practice useing this fuction is more stable
-        /// Especially when the values are repeated.
-        hardware_usart_c &operator<<(uint8_t byte) {
-            send_byte(byte);
-            return *this;
-        }
-
-        /// @brief string output operator
-        ///
-        /// used for char arrays to quickly send more than one byte
-        /// In practice useing this fuction is more stable than repeated use of
-        /// send_byte() Especially when the values are repeated.
-        hardware_usart_c &operator<<(const char *c) {
-            for (const char *p = c; *p != '\0'; p++) {
-                send_byte(*p);
+        /**
+         * @brief Write a uint8_t with the usart
+         *
+         * @param c data to send
+         *
+         * @warning currenltly this will loop until the data is put in the
+         * holding register.
+         */
+        void send(const uint8_t c) override {
+            while (!transmit_ready()) {
+                // wait until transmit is ready
             }
-            return *this;
+
+            // write the byte in the Transmit holding register
+            detail::usart::port<Bus>->US_THR = c;
         }
 
-        /// @brief enables the internal USART controller
-        void enable() override {
-            hardware_usart->US_CR = UART_CR_RXEN | UART_CR_TXEN;
-        }
-
-        /// @brief disables the internal USART controller
-        void disable() override {
-            hardware_usart->US_CR =
-                    UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
-        }
-
-        /// @brief send single byte
-        /// @param c: byte to send
-        /// @return true if byte send, false if not send
-        bool send(const uint8_t c) override {
-           send_byte(c);
-           return true;
-        }
-
-        /// @brief recieve byte bia usart
-        /// @return received byte
+        /**
+         * @brief Get a data from the usart
+         *
+         * @return uint8_t
+         *
+         * @warning if you call this function without any data in the ringbuffer
+         * then this will cause undefined behaviour.
+         */
         uint8_t receive() override {
-            if (!input_buffer.size()) {
-                return 0;
-            }
-
             return input_buffer.copy_and_pop_front();
         }
 
-        /// @brief returns amount of available data in buffer
-        /// @return amount of uint8_t's in buffer
-        unsigned int available() override {
-           if ((hardware_usart->US_CSR & 1) != 0) {
+        /**
+         * @brief returns how much data is available
+         *
+         * @return unsigned int amount of bytes
+         */
+        const unsigned int available() override {
+            return input_buffer.size();
+        }
+
+        /**
+         * @brief Interrupt handler for receiving data when the cpu is doing
+         * other stuff. The user shouln't call this function as it will be
+         * handled through the interrupt controller.
+         *
+         * @warning This adds the data into the ringbuffer and will overwrite
+         * old data if not read once in a while.
+         *
+         */
+        constexpr static void _isr_handler() {
+            // read the status register
+            uint32_t status = detail::usart::port<Bus>->US_CSR &
+                              detail::usart::port<Bus>->US_IMR;
+
+            // check if the rx ready bit is set
+            if ((status & US_CSR_RXRDY)) {
                 input_buffer.push(receive_byte());
             }
-
-            return input_buffer.size();
         }
     };
 }; // namespace r2d2::usart
 
+extern "C" {
+void __USART0_Handler() {
+    r2d2::usart::hardware_usart_c<r2d2::usart::usart0>::_isr_handler();
+}
+
+void __USART1_Handler() {
+    r2d2::usart::hardware_usart_c<r2d2::usart::usart1>::_isr_handler();
+}
+
+void __USART2_Handler() {
+    r2d2::usart::hardware_usart_c<r2d2::usart::usart2>::_isr_handler();
+}
+
+void __USART3_Handler() {
+    r2d2::usart::hardware_usart_c<r2d2::usart::usart3>::_isr_handler();
+}
+}
