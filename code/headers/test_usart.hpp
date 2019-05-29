@@ -1,90 +1,94 @@
 #pragma once
+/**
+ * @file test_usart.hpp
+ * @author Patrick Dekker
+ * @brief Catch2 Test implementation for the usart
+ * @version 0.1
+ * @date 2019-05-24
+ *
+ * @copyright Copyright (c) 2019
+ *
+ */
 
-#include <vector>
 #include <string>
-#include <queue.hpp>
+#include <vector>
+
 #include <usart_connection.hpp>
 
 namespace r2d2::usart {
-
-    template <size_t BufferLength = 250>
+    /**
+     * @brief Usart implementation to test the usart with Catch2
+     *
+     */
     class test_usart_c : public usart_connection_c {
     private:
-        queue_c<uint8_t, BufferLength> receive_buffer;
+        std::vector<uint8_t> receive_buffer;
 
     public:
-        test_usart_c(){}
-
-        /// @brief does not actualy enable anything
-        void enable() override {
-            //Not needed in test implementation
+        /**
+         * @brief Write a uint8_t with the usart
+         *
+         * @param c data to send
+         *
+         * @warning doesnt send anything at the moment
+         */
+        void send(const uint8_t c) override {
         }
 
-        /// @brief does not actualy disable anyting
-        void disable() override {
-            //Not needed in test implementation
-        }
-
-        /// @brief sends byte
-        /// @param c byte to send.. does not actualy send anything
-        bool send(const uint8_t c) override {
-            return true;
-            //Not needed in test implementation
-        }
-
-        ///@brief sends char c
-        ///@param c char to send
-        void putc(char c) override {
-            send(c);
-        }
-
-
-        ///@brief returns byte
-        ///@return uint8_t the next item in the buffer
+        /**
+         * @brief Get a data from the usart
+         *
+         * @return uint8_t
+         */
         uint8_t receive() override {
-            return receive_buffer.copy_and_pop();
+            auto r = receive_buffer.front();
+            receive_buffer.erase(receive_buffer.begin());
+
+            return r;
         }
 
-        ///@brief returns true if char is available
-        ///@return bool false if queue is empty, true if not
-        bool char_available() override {
-            return !receive_buffer.empty();
-        }
-
-        ///@brief returns receive()
-        ///@return char uint8_t from recieve
-        char getc() override {
-            return receive();
-        }
-
-        ///@brief returns 1
-        ///@return unsigned int the amount of bytes in queue
-        unsigned int available() override {
+        /**
+         * @brief returns how much data is available
+         *
+         * @return unsigned int amount of bytes
+         */
+        const unsigned int available() override {
             return receive_buffer.size();
         }
 
-        /// @brief sets a string the test usart will return
+        /**
+         * @brief Set a string the test usart will return
+         *
+         * @param str
+         */
         void set_receive_string(const std::string &str) {
             receive_buffer.clear();
-            for(char c : str){
+
+            for (char c : str) {
                 add_receive_byte(c);
             }
         }
 
-        /// @brief sets bytes the test usart will return
-        /// @param bytes vector of bytes
+        /**
+         * @brief Set the bytes the test usart will return
+         *
+         * @param bytes
+         */
         void set_receive_bytes(const std::vector<uint8_t> &bytes) {
             receive_buffer.clear();
-            for(auto &byte : bytes){
+
+            for (auto &byte : bytes) {
                 add_receive_byte(byte);
             }
         }
 
-        /// @brief sets one byte the test usart will return
-        /// @param byte to be returned in receive
+        /**
+         * @brief Add a byte to the data that the test usart will return
+         *
+         * @param byte
+         */
         void add_receive_byte(const uint8_t byte) {
-            receive_buffer.push(byte);
+            receive_buffer.push_back(byte);
         }
-
     };
-};
+}; // namespace r2d2::usart

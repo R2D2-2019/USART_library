@@ -1,52 +1,85 @@
-/// @file
-/// @brief      base class for a usart implementation hardware, software and
-/// mock
-/// @author     Patrick Dekker
 #pragma once
+/**
+ * @file usart_connection.hpp
+ * @author Patrick Dekker
+ * @brief base class for a usart implementation.
+ * @version 0.1
+ * @date 2019-05-24
+ *
+ * @copyright Copyright (c) 2019
+ *
+ */
 
 #include <cstdint>
+#include <hwlib.hpp>
 
 namespace r2d2::usart {
-    /// @brief  base class for usart implementation
-    class usart_connection_c {
+    /**
+     * @brief Base class for the usart implementation
+     *
+     */
+    class usart_connection_c : public hwlib::ostream, public hwlib::istream {
     public:
-        /// @brief operator << writes byte to usart
-        /// @param byte byte to send
-        usart_connection_c &operator<<(uint8_t byte);
+        /**
+         * @brief Write a uint8_t with the usart
+         *
+         * @param c data to send
+         */
+        virtual void send(const uint8_t c) = 0;
 
-        /// @brief operator << writes string to usart
-        /// @param c c-style string to send
-        usart_connection_c &operator<<(const char *c);
-
-        /// @brief enables internal USART controler
-        virtual void enable() = 0;
-
-        /// @brief disables internal USART controler
-        virtual void disable() = 0;
-
-        /// @brief send byte using USART
-        /// @param c byte to send
-        virtual bool send(const uint8_t c) = 0;
-
-        /// @brief send char using USART
-        /// @param c char to send
-        virtual void putc(char c) = 0;
-
-        /// @brief receive byte from USART
-        /// @return uint8_t byte received from USART
+        /**
+         * @brief Get a data from the usart
+         *
+         * @return uint8_t
+         */
         virtual uint8_t receive() = 0;
 
-        /// @brief check if char is available
-        /// @return true if byte is available false if not
-        virtual bool char_available() = 0;
+        /**
+         * @brief returns how much data is available
+         *
+         * @return unsigned int amount of bytes
+         */
+        virtual const unsigned int available() = 0;
 
-        /// @brief receive char if available
-        /// @return char received
-        virtual char getc() = 0;
+        /**
+         * @brief Write a char with the usart for hwlib ostream
+         *
+         * @param c
+         */
+        void putc(char c) override {
+            send(static_cast<uint8_t>(c));
+        }
 
-        /// @brief returns available data
-        /// @return amount of bytes
-        virtual unsigned int available() = 0;
+        /**
+         * @brief Check if data is available
+         *
+         * @return true if data is available
+         * @return false if no data is available
+         */
+        virtual bool char_available() override {
+            return static_cast<bool>(available());
+        }
+
+        /**
+         * @brief Read and return a single character or '\0'
+         * This function reads and returns a single character.
+         * When no character is available it waits for one.
+         *
+         * @return char
+         */
+        virtual char getc() override {
+            while (!char_available()) {
+                // wait until a char is available
+            }
+            return static_cast<char>(receive());
+        }
+
+        /**
+         * @brief flush override for hwlib::ostream
+         *
+         */
+        void flush() override {
+        }
     };
 
 } // namespace r2d2::usart

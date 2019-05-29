@@ -11,8 +11,10 @@
 SEARCH  += $(USART)/code/headers
 SEARCH  += $(USART)/code/src
 
+# source files in this library
+SOURCES += 
 
-SOURCES += $(USART)/code/src/usart_connection.cpp
+# header files for the library
 HEADERS += $(USART)/code/headers/usart_connection.hpp
 
 ifeq ($(TARGET), native)
@@ -20,9 +22,6 @@ ifeq ($(TARGET), native)
 	HEADERS += $(USART)/code/headers/test_usart.hpp
 	
 else
-    # source files in this library
-    SOURCES +=
-
 	# header files in this library
 	HEADERS += $(USART)/code/headers/hardware_usart.hpp
 
