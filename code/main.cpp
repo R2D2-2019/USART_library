@@ -5,9 +5,9 @@ int main(void) {
     // kill the watchdog
     WDT->WDT_MR = WDT_MR_WDDIS;
     hwlib::wait_ms(1000);
-    hwlib::cout << "this works on arduino";
+    hwlib::cout << "this works on arduino\n";
 
-    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
+    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(r2d2::usart::usart_divider{45, 4});
 
     char t = 'a';
 
