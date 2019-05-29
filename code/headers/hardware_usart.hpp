@@ -259,7 +259,7 @@ namespace r2d2::usart {
 
             // write the baud rate in the BRGR register
             detail::usart::port<Bus>->US_BRGR =
-                (divider.divider | divider.fraction << 16);
+                (divider.divider | (divider.fraction & 0x7) << 16);
 
             // set the usart mode
             detail::usart::port<Bus>->US_MR =
