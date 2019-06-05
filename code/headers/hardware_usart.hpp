@@ -307,8 +307,11 @@ namespace r2d2::usart {
 
             // check if the rx ready bit is set
             if ((status & US_CSR_RXRDY)) {
-                // update the buffer size
-                buffer_size++;
+                if (!input_buffer.full()) {
+                    // update the buffer size only when the input buffer is not
+                    // full. As the size won't change when it is full. 
+                    buffer_size++;
+                }
 
                 input_buffer.push(receive_byte());
             }
