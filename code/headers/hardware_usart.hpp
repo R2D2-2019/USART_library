@@ -156,6 +156,20 @@ namespace r2d2::usart {
     private:
         static inline ringbuffer_c<uint8_t, 256> input_buffer;
 
+        /**
+         * @brief
+         * Volatile size_t that is used to get the amount of data is in the
+         * ringbuffer. The ringbuffer is filled in an interrupt and the
+         * available function will return the amount in the ringbuffer
+         *
+         * However "using while(!usart.available()) {}" will cause the compiler
+         * to optimize this to a while(true); loop if this results to true. This
+         * is not the desired behaviour. We can't mark the ringbuffer itself als
+         * volatile, since that would require marking all its member functions
+         * as volatile as well.
+         */
+        static inline volatile size_t buffer_size = 0;
+
         /// @brief check if the transmitter is ready to send
         /// @return true if ready to send, false if not ready to send
         constexpr static bool transmit_ready() {
@@ -259,6 +273,10 @@ namespace r2d2::usart {
          * then this will cause undefined behaviour.
          */
         uint8_t receive() override {
+            // remove one from the buffer size. To keep available up to date.
+            buffer_size--;
+
+            // return the value
             return input_buffer.copy_and_pop_front();
         }
 
@@ -266,9 +284,11 @@ namespace r2d2::usart {
          * @brief returns how much data is available
          *
          * @return unsigned int amount of bytes
+         *
+         * @warning this value is updated in the interrupt
          */
         const unsigned int available() override {
-            return input_buffer.size();
+            return buffer_size;
         }
 
         /**
@@ -287,6 +307,12 @@ namespace r2d2::usart {
 
             // check if the rx ready bit is set
             if ((status & US_CSR_RXRDY)) {
+                if (!input_buffer.full()) {
+                    // update the buffer size only when the input buffer is not
+                    // full. As the size won't change when it is full. 
+                    buffer_size++;
+                }
+
                 input_buffer.push(receive_byte());
             }
         }
