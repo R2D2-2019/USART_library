@@ -204,11 +204,34 @@ namespace r2d2::usart {
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
         }
 
+        /**
+         * @brief This function calculates the divider for the baudrate
+         *
+         * @warning this function will generate a error when used on runtime
+         * as this uses floats as this function should be removed through
+         * optimisation.
+         *
+         */
+        constexpr usart_divider calculate_divider(unsigned int baudrate) const
+            __attribute__((error("Runtime usage of divider_calculator"))) {
+
+            // calculate the base divider and fp
+            float divider = CHIP_FREQ_CPU_MAX / 16 * baudrate;
+
+            // calculate the cd
+            uint16_t cd = static_cast<uint16_t>(divider);       
+
+            // get the data after the comma
+            uint8_t fp = static_cast<uint8_t>(((divider - cd) + (1.f / 16.f)) * 8);
+
+            return {cd, fp};
+        }
+
     public:
         /**
          * @brief Construct a hardware usart c object using a divider and a
-         * fraction. 
-         * 
+         * fraction.
+         *
          * @detail To calculate these divider you can use the following
          * formula:
          *
@@ -222,8 +245,7 @@ namespace r2d2::usart {
          * baudrate = CHIP_FREQ_CPU_MAX / (16 * (CD + FP/8)
          *
          * converted for CD, FP:
-         * CD, FP = CHIP_FREQ_CPU_MAX / 16 *
-         * baudrate
+         * CD, FP = CHIP_FREQ_CPU_MAX / 16 * baudrate
          * (Before the comma is the CD and after the comma is a number that
          * needs to be converted to a step fom 0..7.)
          *
@@ -278,10 +300,7 @@ namespace r2d2::usart {
          * @param baudrate
          */
         hardware_usart_c(unsigned int baudrate)
-            : hardware_usart_c(usart_divider{
-                static_cast<uint16_t>(
-                    (CHIP_FREQ_CPU_MAX / 16) / baudrate),
-                0}) {
+            : hardware_usart_c(calculate_divider(baudrate)) {
         }
 
         /**
