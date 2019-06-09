@@ -34,50 +34,7 @@ auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
 ```
 The template parameter in the class is what usart port you want to use. **Warning** this is not the same port as the labels on the Arduino Due. The sam3x8e chip has 4 hardware usart ports, 3 of these ports have labels. The other port doesn't have a label. See the Doxygen or hardware_usart.hpp for the pin definitions.
 
-The first parameter is the baudrate, 9600 is used here as an example. Check which baudrate is applicable for you. With the higher baud rates (>= 115200 baud) there is a high chance of the usart not being withing the 3% error margin. Please use the calculation below to verify that the selected baud rate is within a 3% error margin. As the manufacturer does not recommend a higher error than 3%. 
-
-The current formula to calculate the register setting for the baud rate is:
-```
-register = (84'000'000 / 16) / baudrate;
-```
-
-To calculate the error use:
-```
-Error = 1 - (ExpectedBaudRate / ActualBaudRate)
-```
-
-This rounds some of the numbers down. If the error is higher than 3% use the following formula to get the baudrate within the 3% error margin. 
-
-If we calculate this number we can see that this will give us a float. We can use the data after the comma remove some of this error. As the usart will allow us to use fractions with 1/8 of a step.
-
-To use this we can call the other constructor. For example when we want to use the baudrate 230400 we have a error rate of 3.6% 
-```
-(84'000'000 / 16) / 230400 = 22.78 CD
-84'000'000 / (16 * 22) = 238'636 baud
-
-1 - (238'636 / 230'400) = 3.574%
-```
-
-To improve this we can use the data after the comma.
-```cpp
-0.78 ≈ 6/8
-
-84'000'000 / (16 * (22 + 6/8)) = 230'769 baud
-
-1 - (230'769 / 230'400) = 0.160%
-```
-As we can see the error went down from 3.6% to 0.2%.
-
-To use this other constructor we can simply call:
-```cpp
-#include <hardware_usart.hpp>
-
-auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>({22, 6});
-```
-And this will set the correct settings in the register
-
-If there are multiple objects using the same usart the object that was constructed as last will set the baud rate, as this is set every time the constructor is called.
-
+The first parameter is the baudrate, 9600 is used here as an example. Check which baudrate is applicable for you. If there are multiple objects using the same usart the object that was constructed as last will set the baud rate, as this is set every time the constructor is called.
 
 ## Some examples
 
