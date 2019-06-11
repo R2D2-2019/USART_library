@@ -216,7 +216,7 @@ namespace r2d2::usart {
             __attribute__((error("Runtime usage of divider_calculator"))) {
 
             // calculate the base divider and fp
-            float divider = CHIP_FREQ_CPU_MAX / 16 * baudrate;
+            float divider = CHIP_FREQ_CPU_MAX / (16.f * baudrate);
 
             // calculate the cd
             uint16_t cd = static_cast<uint16_t>(divider);
