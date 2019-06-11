@@ -36,7 +36,6 @@ The template parameter in the class is what usart port you want to use. **Warnin
 
 The first parameter is the baudrate, 9600 is used here as an example. Check which baudrate is applicable for you. If there are multiple objects using the same usart the object that was constructed as last will set the baud rate, as this is set every time the constructor is called.
 
-
 ## Some examples
 
 Example of using the usart connection with a class that needs a usart:

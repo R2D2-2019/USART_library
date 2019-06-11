@@ -151,6 +151,15 @@ namespace r2d2::usart {
 
     } // namespace detail
 
+    // struct for storing divider information
+    struct usart_divider {
+        // Main divider for the baudrate
+        uint16_t divider;
+
+        // extra fraction to make the baud rate more precice
+        uint8_t fraction;
+    };
+
     template <typename Bus>
     class hardware_usart_c : public usart_connection_c {
     private:
@@ -209,8 +218,58 @@ namespace r2d2::usart {
                 UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
         }
 
+        /**
+         * @brief This function calculates the divider for the baudrate
+         *
+         * @warning this function will generate a error when used on runtime
+         * as this uses floats as this function should be removed through
+         * optimisation.
+         *
+         */
+        constexpr usart_divider calculate_divider(unsigned int baudrate) const
+            __attribute__((error("Runtime usage of divider_calculator"))) {
+
+            // calculate the base divider and fp
+            float divider = CHIP_FREQ_CPU_MAX / (16.f * baudrate);
+
+            // calculate the cd
+            uint16_t cd = static_cast<uint16_t>(divider);
+
+            // get the data after the comma
+            uint8_t fp = static_cast<uint8_t>(((divider - cd) + (1.f / 16.f)) * 8);
+
+            return {cd, fp};
+        }
+
     public:
-        hardware_usart_c(unsigned int baudrate) {
+        /**
+         * @brief Construct a hardware usart c object using a divider and a
+         * fraction.
+         *
+         * @detail To calculate these divider you can use the following
+         * formula:
+         *
+         * divider baud rate only calculation:
+         * baudrate = CHIP_FREQ_CPU_MAX / CD * 16
+         *
+         * converted for CD:
+         * CD = CHIP_FREQ_CPU_MAX / 16 * baudrate
+         *
+         * Using a fractional baud rate calculation:
+         * baudrate = CHIP_FREQ_CPU_MAX / (16 * (CD + FP/8)
+         *
+         * converted for CD, FP:
+         * CD, FP = CHIP_FREQ_CPU_MAX / 16 * baudrate
+         * (Before the comma is the CD and after the comma is a number that
+         * needs to be converted to a step fom 0..7.)
+         *
+         * Where CHIP_FREQ_CPU_MAX is 84'000'000 (84Mhz)
+         * CD = is the base divider. And FP is a number between 0..7.
+         * Where 0 = 0/8, 1 = 1/8, 2 = 2/8, enz
+         *
+         * @param divider
+         */
+        hardware_usart_c(usart_divider divider) {
             // set the peripheral for the usart pins
             set_peripheral<Bus::rx>();
             set_peripheral<Bus::tx>();
@@ -235,7 +294,8 @@ namespace r2d2::usart {
             disable();
 
             // write the baud rate in the BRGR register
-            detail::usart::port<Bus>->US_BRGR = (5241600u / baudrate);
+            detail::usart::port<Bus>->US_BRGR =
+                (divider.divider | (divider.fraction & 0x7) << 16);
 
             // set the usart mode
             detail::usart::port<Bus>->US_MR =
@@ -245,6 +305,18 @@ namespace r2d2::usart {
 
             // enable the interrupt for handling the receiving of data
             detail::usart::port<Bus>->US_IER = US_IER_RXRDY;
+        }
+
+        /**
+         * @brief Construct a hardware usart c object. Calculates a divider
+         * based on the the baud rate. Calculates the divider on compile time.
+         * This will give an error when the calculate_divider is not optimized
+         * away. That means it wont compile with -O0
+         *
+         * @param baudrate
+         */
+        hardware_usart_c(unsigned int baudrate)
+            : hardware_usart_c(calculate_divider(baudrate)) {
         }
 
         /**
