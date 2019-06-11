@@ -7,7 +7,7 @@ int main() {
     hwlib::wait_ms(1000);
     hwlib::cout << "this works on arduino\n";
 
-    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(9600);
+    auto usart = r2d2::usart::hardware_usart_c<r2d2::usart::usart0>(115200);
 
     char t = 'a';
 
