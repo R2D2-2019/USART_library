@@ -219,7 +219,7 @@ namespace r2d2::usart {
             float divider = CHIP_FREQ_CPU_MAX / 16 * baudrate;
 
             // calculate the cd
-            uint16_t cd = static_cast<uint16_t>(divider);       
+            uint16_t cd = static_cast<uint16_t>(divider);
 
             // get the data after the comma
             uint8_t fp = static_cast<uint8_t>(((divider - cd) + (1.f / 16.f)) * 8);
@@ -295,7 +295,9 @@ namespace r2d2::usart {
 
         /**
          * @brief Construct a hardware usart c object. Calculates a divider
-         * based on the the baud rate. Only sets the basic divider.
+         * based on the the baud rate. Calculates the divider on compile time.
+         * This will give an error when the calculate_divider is not optimized
+         * away. That means it wont compile with -O0
          *
          * @param baudrate
          */
