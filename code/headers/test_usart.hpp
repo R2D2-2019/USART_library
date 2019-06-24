@@ -23,6 +23,7 @@ namespace r2d2::usart {
     class test_usart_c : public usart_connection_c {
     private:
         std::vector<uint8_t> receive_buffer;
+        std::vector<uint8_t> send_buffer;
 
     public:
         /**
@@ -33,6 +34,7 @@ namespace r2d2::usart {
          * @warning doesnt send anything at the moment
          */
         void send(const uint8_t c) override {
+            send_buffer.push_back(c);
         }
 
         /**
@@ -68,6 +70,19 @@ namespace r2d2::usart {
                 add_receive_byte(c);
             }
         }
+        /**
+         * @brief Set a string the test usart will return
+         *
+         * @param str
+         */
+
+        void set_send_string(const std::string &str) {
+            send_buffer.clear();
+
+            for (char c : str) {
+                send(c);
+            }
+        }
 
         /**
          * @brief Set the bytes the test usart will return
@@ -89,6 +104,26 @@ namespace r2d2::usart {
          */
         void add_receive_byte(const uint8_t byte) {
             receive_buffer.push_back(byte);
+        }
+
+        /**
+         * @brief Add a byte to the send buffer that the test usart will return
+         *
+         * @param byte
+         */
+        void add_send_byte(const uint8_t byte) {
+            send_buffer.push_back(byte);
+        }
+
+        /**
+         * @brief returns the first byte that was added into the send buffer
+         *
+         */
+        uint8_t get_send_byte() {
+            auto byte = send_buffer.front();
+            send_buffer.erase(send_buffer.begin());
+
+            return byte;
         }
     };
 }; // namespace r2d2::usart
