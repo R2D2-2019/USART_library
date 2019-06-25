@@ -28,13 +28,13 @@ namespace r2d2::usart {
     public:
         /**
          * @brief Write a uint8_t with the usart
-         *
-         * @param c data to send
-         *
-         * @warning doesnt send anything at the moment
+         * 
+         * @details will add the byte to the send buffer.
+         * 
+         * @param byte
          */
-        void send(const uint8_t c) override {
-            send_buffer.push_back(c);
+        void send(const uint8_t byte) override {
+            send_buffer.push_back(byte);
         }
 
         /**
@@ -70,12 +70,12 @@ namespace r2d2::usart {
                 add_receive_byte(c);
             }
         }
+
         /**
          * @brief Set a string the test usart will return
          *
          * @param str
          */
-
         void set_send_string(const std::string &str) {
             send_buffer.clear();
 
@@ -85,7 +85,7 @@ namespace r2d2::usart {
         }
 
         /**
-         * @brief Set the bytes the test usart will return
+         * @brief Set the bytes to the receive buffer that the test usart will return
          *
          * @param bytes
          */
@@ -98,7 +98,7 @@ namespace r2d2::usart {
         }
 
         /**
-         * @brief Add a byte to the data that the test usart will return
+         * @brief Add a byte to the receive buffer data that the test usart will return
          *
          * @param byte
          */
@@ -107,17 +107,31 @@ namespace r2d2::usart {
         }
 
         /**
+         * @brief Set the bytes the test usart will return
+         *
+         * @param bytes
+         */
+        void set_send_bytes(const std::vector<uint8_t> &bytes) {
+            send_buffer.clear();
+            
+            for(auto &byte : bytes){
+                add_send_byte(byte);
+            }
+        }
+
+        /**
          * @brief Add a byte to the send buffer that the test usart will return
          *
          * @param byte
          */
-        void add_send_byte(const uint8_t byte) {
+        void add_send_byte(const uint8_t byte){
             send_buffer.push_back(byte);
         }
 
         /**
-         * @brief returns the first byte that was added into the send buffer
+         * @brief returns and removes the first byte that was added into the send buffer.
          *
+         * @return uint8_t
          */
         uint8_t get_send_byte() {
             auto byte = send_buffer.front();
