@@ -124,7 +124,7 @@ namespace r2d2::usart {
         /**
          * @brief returns the send buffer into a vector.
          *
-         * return std::vector<uint8_t>
+         * @return std::vector<uint8_t>
          */
         std::vector<uint8_t> get_send_bytes() const {
             return send_buffer;
